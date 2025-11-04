@@ -1,33 +1,55 @@
 <script>
   import { onMount } from 'svelte';
   import { startLogin, getStoredAccessToken, clearAuth } from '$lib/spotifyAuth';
+  import { getCurrentlyPlaying } from '$lib/api';
+  import { getTrackTitle } from '$lib/data/metadata';
+  import { getTrackCover } from '$lib/data/albumcover';
+  import { getTrackDuration } from '$lib/data/duration';
 
   let trackTitle = null;
+  let trackCover = null;
+  let trackDuration = null;
   let loading = false;
   let errorMsg = null;
   let hasToken = false;
 
+  function formatDuration() {
+    if (trackDuration == null) return '';
+    const minutes = Math.floor(trackDuration / 60);
+    const seconds = trackDuration % 60;
+    return `${minutes}:${String(seconds).padStart(2, '0')}`;
+  }
+
   async function fetchCurrentlyPlaying() {
     errorMsg = null;
     trackTitle = null;
+    trackCover = null;
+    trackDuration = null;
+
     const token = getStoredAccessToken();
     if (!token) { hasToken = false; return; }
     hasToken = true;
 
     loading = true;
     try {
-      const res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await getCurrentlyPlaying(token);
 
       if (res.status === 204) {
-        trackTitle = null; // niets speelt
-      } else if (res.ok) {
-        const data = await res.json();
-        trackTitle = data && data.item && data.item.name ? data.item.name : '(onbekende track)';
+        trackTitle = null;
+        trackCover = null;
       } else if (res.status === 401) {
         hasToken = false;
-        errorMsg = 'Token verlopen. Log opnieuw in.';
+        errorMsg = 'Authenticatie verlopen. Log opnieuw in.';
+      } else if (res.status === 200) {
+        const data = res.data;
+        trackTitle = getTrackTitle(data);
+        trackCover = getTrackCover(data);
+        trackDuration = getTrackDuration(data);
+        // zet milliseconden om naar seconden zodat formatDuration() zonder parameter werkt
+        if (trackDuration != null) {
+          trackDuration = Math.floor(trackDuration / 1000);
+        }
+        console.log('trackDuration (seconds):', trackDuration, 'data.item?', data?.item);
       } else {
         errorMsg = `Fout ${res.status}`;
       }
@@ -46,6 +68,8 @@
     clearAuth();
     hasToken = false;
     trackTitle = null;
+    trackCover = null;
+    trackDuration = null;
   }
 
   onMount(() => {
@@ -78,7 +102,17 @@
       <p>Bezig met ophalen…</p>
     {:else}
       {#if trackTitle}
-        <p><strong>Track:</strong> {trackTitle}</p>
+        <div style="display:flex;gap:0.75rem;align-items:center">
+          {#if trackCover}
+            <img src={trackCover} alt="Album cover" style="width:96px;height:96px;object-fit:cover;border-radius:6px" />
+          {/if}
+          <div>
+            {#if trackDuration != null}
+              <p><strong>Duur:</strong> {formatDuration()}</p>
+            {/if}
+            <p><strong>Track:</strong> {trackTitle}</p>
+          </div>
+        </div>
       {:else}
         <p>Er speelt nu niets.</p>
       {/if}
