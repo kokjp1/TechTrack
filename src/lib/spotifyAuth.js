@@ -1,3 +1,7 @@
+/* -------------------------
+  PKCE AUTHORIZATION FLOW
+------------------------- */
+
 const SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize';
 const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 
@@ -93,3 +97,9 @@ export function clearAuth() {
   sessionStorage.removeItem(REFRESH_TOKEN_KEY);
   sessionStorage.removeItem(CODE_VERIFIER_KEY);
 }
+
+/* -------------------------
+  VOLLEDIG VAN SPOTIFY TUTORIAL 
+  https://developer.spotify.com/documentation/web-api/howtos/web-app-profile
+  https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
+------------------------- */
