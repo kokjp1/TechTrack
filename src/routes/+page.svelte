@@ -16,6 +16,7 @@ SVELTE COMPONENTS IMPORTS
 	import EmptyState from '$lib/components/EmptyState.svelte';
 	import TrackInfo from '$lib/components/TrackInfo.svelte';
 	import AlbumCover from '$lib/components/AlbumCover.svelte';
+	import Visualization from '$lib/components/visualization.svelte';
 
 	let signedIn = false;
 
@@ -25,7 +26,7 @@ SVELTE COMPONENTS IMPORTS
 	});
 </script>
 
-<!----------------------------->
+<!------------------------------>
 <!-- BODY -->
 <!-- --------------------------->
 
@@ -33,7 +34,10 @@ SVELTE COMPONENTS IMPORTS
 	{#if $currentSong}
 		<main>
 			<TrackInfo />
-			<AlbumCover />
+			<section>
+				<AlbumCover />
+				<Visualization />
+			</section>
 		</main>
 	{:else}
 		<EmptyState />
@@ -61,5 +65,10 @@ SVELTE COMPONENTS IMPORTS
 	main {
 	  flex-direction: column-reverse;
 	}
+  }	
+
+  section {
+	display:flex;
+	flex-direction:row;
   }	
 </style>
