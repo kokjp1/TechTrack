@@ -16,7 +16,6 @@
     } catch (e) {
       console.error(e);
     } finally {
-      // Terug naar home zonder query params
       window.location.replace('/');
     }
   });
