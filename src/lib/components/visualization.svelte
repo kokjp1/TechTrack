@@ -1,28 +1,39 @@
+<!----------------------------->
+<!-- VISUALIZATION COMPONENT -->
+<!----------------------------->
+
 <script>
   import { scaleLinear } from 'd3-scale';
   import { currentSong } from '$lib/stores/currentSongDataStore.js';
 
-  // Map popularity 0–100 naar radius 20–120
-  const rScale = scaleLinear([0, 100], [20, 120]).clamp(true);
-
-  // Lees de store reactief en vang undefined af
-  $: popularity =
-    $currentSong?.track?.popularity ??
-    $currentSong?.popularity ??
-    0;
-
-  // Bereken de radius op basis van popularity
-  $: radius = rScale(popularity);
+  // keep popularity mapping; overall visual size jumps via CSS width breakpoints
+  const sizeCalculation = scaleLinear([0, 100], [100, 220]).clamp(true);
+  $: vinylSize = sizeCalculation($currentSong.popularity);
 </script>
 
-<svg viewBox="0 0 400 400" width="200" height="200">
-  <circle cx="200" cy="200" r={radius} fill="black" />
+<svg class="viz" viewBox="0 0 500 500">
+  <circle cx="250" cy="250" r={vinylSize} fill="white" />
 </svg>
 
-
 <style>
-    circle {
-        display:block;
-    	transform: translateX(-50%);
+  .viz {
+    display: block;
+    position: absolute;
+    width: 500px;
+    height: auto;
+    transform: translateX(50%);
+    z-index: -1;
+  }
+
+  @media (max-width: 1392px) {
+    .viz {
+      width: 320px; 
     }
+  }
+
+  @media (max-width: 595px) {
+    .viz {
+      width: 250px; 
+    }
+  }
 </style>

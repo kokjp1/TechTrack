@@ -57,18 +57,25 @@ SVELTE COMPONENTS IMPORTS
     align-items: center;    
     justify-content: center;
     padding: 2rem;
-    gap: 2.5em;
+    gap: 10em;
     height: 100vh;        
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 1392px) {
 	main {
 	  flex-direction: column-reverse;
 	}
   }	
 
+  @media (max-width: 595px) {
+	section {
+		transform: translateX(-17.5%);
+	}
+  }
+
   section {
 	display:flex;
 	flex-direction:row;
+	align-items: center;
   }	
 </style>

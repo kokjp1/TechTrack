@@ -2,6 +2,7 @@ html {
     background-color: #121212;
     font-family: 'SF Pro Text', Arial, sans-serif;
     color:white;
+    max-width: 100%;    
 }
 
 @font-face {
@@ -27,7 +28,19 @@ html {
 
 @font-face {
     font-family: 'SF Pro Text';
+    src: url('lib/assets/fonts/SF-Pro-Text-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SF Pro Text';
     src: url('lib/assets/fonts/SF-Pro-Text-Heavy.otf') format('opentype');
     font-weight: 800;
     font-style: normal;
+}
+
+:root, html, body {
+    overflow-x: hidden;  
+    overflow-x: clip;    
 }
