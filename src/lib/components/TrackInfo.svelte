@@ -31,18 +31,18 @@
 		<section>
 			<!-- artiest(en) -->
 			{#if $currentSong.artists}
-				<p class="artists">{$currentSong.artists}</p>
+				<p>{$currentSong.artists}</p>
 			{/if}
 			<!-- album -->
 			{#if $currentSong.album}
-				<p class="album">&nbsp; • &nbsp;{$currentSong.album}</p>
+				<p style="color: {$currentSong.vibrant}">&nbsp; • &nbsp;{$currentSong.album}</p>
 			{/if}
 		</section>
 		<section>
 			<p>GENERAL TRACK INFORMATION</p>
       <!-- duration -->
 			{#if $currentSong.duration}
-				<p class="duration">⏳ Duration: {formatDuration($currentSong.duration)}</p>
+				<p>⏳ Duration: {formatDuration($currentSong.duration)}</p>
 			{/if}
 			<!-- popularity -->
 			{#if $currentSong.popularity}
@@ -69,6 +69,8 @@
   section {
     display: flex;
     flex-direction: row;
+    width: 100%;
+    align-self: stretch; 
   }
 
   h1 {
@@ -78,6 +80,7 @@
   }
 
   section:nth-of-type(1) {
+    width:500px;
     p {
       color: lightgray;
       font-size: 1.1em;
@@ -143,6 +146,9 @@
     h1 { 
       font-size: 3em; 
       text-align: center;
+    }
+    section:nth-of-type(1) {
+      justify-content: center;
     }
     section:nth-of-type(2) {
       flex-direction: column;

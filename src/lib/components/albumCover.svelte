@@ -18,6 +18,7 @@
     object-fit: cover;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* transform: translateX(50%); */
   }
 
   @media (max-width: 1392px) {

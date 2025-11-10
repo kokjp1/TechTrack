@@ -16,6 +16,7 @@
   $: albumCoverUrl = $currentSong.image;
   $: vinylImageSize = vinylSize * 0.35;
 
+  // TODO: Glow size calculation based on follower of artist popularity, zelfde methode als bovenstaand gebruiken
 
 </script>
 
@@ -30,8 +31,10 @@
       <circle cx="250" cy="250" r={vinylImageSize} />
     </clipPath>
 
-  <!-- vinyl plaat -->
-  <circle cx="250" cy="250" r={vinylSize} fill="black" />
+  <!-- vinyl plaat ----------
+  Kleur aanpasbaar naar wens, gewoon {$currentSong.[KLEURTYPE]AlbumColor} aanpassen
+  --------------------------->
+  <circle cx="250" cy="250" r={vinylSize} fill="{$currentSong.vibrantAlbumColor}" style="filter: drop-shadow(0 0 200px {$currentSong.vibrantAlbumColor})" />
 
   <!-- afbeelding plaatsen in de eerder gemaakte mask & juist positioneren-->
   {#if albumCoverUrl}
@@ -52,6 +55,7 @@
     height: auto;
     transform: translateX(50%);
     z-index: -1;
+    overflow: visible;
   }
 
   @media (max-width: 1392px) {
