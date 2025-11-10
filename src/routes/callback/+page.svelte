@@ -21,4 +21,4 @@
   });
 </script>
 
-<p>Verwerken…</p>
+<p>Spotify Authorization in progress...</p>

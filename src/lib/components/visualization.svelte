@@ -10,14 +10,28 @@
   VINYL SIZE CALCULATION + IMAGE 
   ------------------------------- */
 
-  const sizeCalculation = scaleLinear([0, 100], [100, 220]).clamp(true);
+  const sizeCalculation = scaleLinear()
+    .domain([0, 100])
+    .range([100, 220])
+    .clamp(true);
+    
   $: vinylSize = sizeCalculation($currentSong.popularity);
 
   $: albumCoverUrl = $currentSong.image;
   $: vinylImageSize = vinylSize * 0.35;
 
-  // TODO: Glow size calculation based on follower of artist popularity, zelfde methode als bovenstaand gebruiken
+  /* -------------------------------
+  GLOW BLUR SIZE (based on artistPopularity)
+  ------------------------------- */
+  const glowBlurScale = scaleLinear()
+    .domain([0, 100])
+    .range([20, 150])
+    .clamp(true); 
+    
+  $: glowBlurSize = glowBlurScale($currentSong.artistPopularity);
 
+  // DEBUG LOGGING
+  // $: console.log('[Visualization] artistPopularity:', $currentSong.artistPopularity, '-> glowBlurSize(px):', glowBlurSize);
 </script>
 
 <!----------------------------->
@@ -34,12 +48,17 @@
   <!-- vinyl plaat ----------
   Kleur aanpasbaar naar wens, gewoon {$currentSong.[KLEURTYPE]AlbumColor} aanpassen
   --------------------------->
-  <circle cx="250" cy="250" r={vinylSize} fill="{$currentSong.vibrantAlbumColor}" style="filter: drop-shadow(0 0 200px {$currentSong.vibrantAlbumColor})" />
+  <circle
+    cx="250"
+    cy="250"
+    r={vinylSize}
+    fill="{$currentSong.vibrantAlbumColor}"
+    style:filter={`drop-shadow(0 0 ${glowBlurSize}px ${$currentSong.vibrantAlbumColor})`}
+  />
 
   <!-- afbeelding plaatsen in de eerder gemaakte mask & juist positioneren-->
   {#if albumCoverUrl}
-    <image href={albumCoverUrl} x={250 - vinylImageSize} y={250 - vinylImageSize} width={vinylImageSize * 2} height={vinylImageSize * 2} clip-path="url(#coverClip)" 
-    />
+    <image href={albumCoverUrl} x={250 - vinylImageSize} y={250 - vinylImageSize} width={vinylImageSize * 2} height={vinylImageSize * 2} clip-path="url(#coverClip)" />
   {/if}
 </svg>
 

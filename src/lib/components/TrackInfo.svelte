@@ -28,17 +28,16 @@
 		{#if $currentSong.title}
 			<h1 class="now-playing">{$currentSong.title}</h1>
 		{/if}
-		<section>
-			<!-- artiest(en) -->
-			{#if $currentSong.artists}
-				<p>{$currentSong.artists}</p>
-			{/if}
-			<!-- album -->
-			{#if $currentSong.album}
-				<p style="color: {$currentSong.vibrant}">&nbsp; • &nbsp;{$currentSong.album}</p>
-			{/if}
-		</section>
-		<section>
+
+    {#if $currentSong.artists || $currentSong.album}
+      <div class="sub">
+        {#if $currentSong.artists}{$currentSong.artists}{/if}
+        {#if $currentSong.artists && $currentSong.album} • {/if}
+        {#if $currentSong.album}{$currentSong.album}{/if}
+      </div>
+    {/if}
+
+    <section class="info-section">
 			<p>GENERAL TRACK INFORMATION</p>
       <!-- duration -->
 			{#if $currentSong.duration}
@@ -50,6 +49,12 @@
           class="popularity"
           data-tip="Popularity is based on total streams and how recent they are. Tracks played more recently rank higher. Higher number = More popular."
         >🔥 Popularity: {$currentSong.popularity}</p>
+      {/if}
+      {#if $currentSong.artistPopularity}
+        <p
+          class="popularity"
+          data-tip="Artist Popularity is based on the popularity of all the artist's tracks. Higher number = More popular."
+        >🎤 Artist Popularity: {$currentSong.artistPopularity}</p>
       {/if}
 		</section>
 	{/if}
@@ -63,52 +68,43 @@
   div {
     display: flex;
     flex-direction: column;
-    max-width:400px;
-  }
-
-  section {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    align-self: stretch; 
+    max-width: 450px;
   }
 
   h1 {
     font-weight: 700;
-    font-size: 5em;
+    font-size: 4em;
     margin: 0;
   }
 
-  section:nth-of-type(1) {
-    width:500px;
-    p {
-      color: lightgray;
-      font-size: 1.1em;
-      font-weight: 600;
-    }
+  .sub {
+    color: #9aa5b1;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    font-size: 18px;
   }
 
-  section:nth-of-type(2) {
+  /* General info block */
+  .info-section {
     display: flex;
     flex-direction: row;
     align-items: center;
-    flex-wrap: wrap;          
+    flex-wrap: wrap;
     gap: 0.75rem;
+    width: 100%;
   }
-
-  section:nth-of-type(2) p:first-child {
-    flex-basis: 100%; 
+  .info-section p:first-child {
+    flex-basis: 100%;
     font-size: 0.85em;
     color: #ced2d6;
     letter-spacing: 0.085em;
     margin: 0;
   }
-
-  section:nth-of-type(2) p {
+  .info-section p {
     font-weight: 600;
     font-size: .85em;
     margin: 0;
-    white-space: nowrap; 
+    white-space: nowrap;
   }
 
   .popularity {
@@ -147,15 +143,15 @@
       font-size: 3em; 
       text-align: center;
     }
-    section:nth-of-type(1) {
-      justify-content: center;
+    .sub {
+      text-align: center;
     }
-    section:nth-of-type(2) {
+    .info-section {
       flex-direction: column;
       align-items: center;
       gap: 1em;
     }
-    section:nth-of-type(2) p:first-child {
+    .info-section p:first-child {
       flex-basis: auto;
     }
   }
@@ -165,5 +161,9 @@
       font-size: 2em;
       text-align: center;
     } 
+    .sub {
+      font-size: 1em;
+      text-align: center;
+    }
   }
 </style>
