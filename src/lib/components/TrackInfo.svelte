@@ -84,7 +84,6 @@
     font-size: 18px;
   }
 
-  /* General info block */
   .info-section {
     display: flex;
     flex-direction: row;
@@ -114,7 +113,7 @@
   .popularity[data-tip]::after {
     content: attr(data-tip);
     position: absolute;
-    left: -115%;
+    left: -150%;
     top: 100%;
     background: #111;
     color: #fff;

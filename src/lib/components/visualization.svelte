@@ -30,7 +30,21 @@
     
   $: glowBlurSize = glowBlurScale($currentSong.artistPopularity);
 
-  // DEBUG LOGGING
+  /* -------------------------------
+  SPIN DURATION OP BASIS VAN SONGDUUR
+  ------------------------------- */
+  const typicalRangeSec = [110, 350];
+  // Hoe lang één rotatie mag duren binnen die range
+  const animRangeSec = [6, 16];
+
+  const durationToSpinSec = scaleLinear()
+    .domain(typicalRangeSec)
+    .range(animRangeSec)
+    .clamp(true);
+
+  $: spinDurationSec = durationToSpinSec((($currentSong.duration) / 1000));
+
+// DEBUG LOGGING
   // $: console.log('[Visualization] artistPopularity:', $currentSong.artistPopularity, '-> glowBlurSize(px):', glowBlurSize);
 </script>
 
@@ -41,25 +55,31 @@
 <svg viewBox="0 0 500 500">
 
   <!-- mask voor de afbeelding -->
-    <clipPath id="coverClip">
-      <circle cx="250" cy="250" r={vinylImageSize} />
-    </clipPath>
+  <clipPath id="coverClip">
+    <circle cx="250" cy="250" r={vinylImageSize} />
+  </clipPath>
 
-  <!-- vinyl plaat ----------
-  Kleur aanpasbaar naar wens, gewoon {$currentSong.[KLEURTYPE]AlbumColor} aanpassen
-  --------------------------->
-  <circle
-    cx="250"
-    cy="250"
-    r={vinylSize}
-    fill="{$currentSong.vibrantAlbumColor}"
-    style:filter={`drop-shadow(0 0 ${glowBlurSize}px ${$currentSong.vibrantAlbumColor})`}
-  />
+  <!-- Vinyl + cover in één draaiende groep -->
+  <g class="spin" style={`--spin-duration: ${spinDurationSec}s`}>
+    <circle
+      cx="250"
+      cy="250"
+      r={vinylSize}
+      fill="{$currentSong.vibrantAlbumColor}"
+      style:filter={`drop-shadow(0 0 ${glowBlurSize}px ${$currentSong.vibrantAlbumColor})`}
+    />
 
-  <!-- afbeelding plaatsen in de eerder gemaakte mask & juist positioneren-->
-  {#if albumCoverUrl}
-    <image href={albumCoverUrl} x={250 - vinylImageSize} y={250 - vinylImageSize} width={vinylImageSize * 2} height={vinylImageSize * 2} clip-path="url(#coverClip)" />
-  {/if}
+    {#if albumCoverUrl}
+      <image
+        href={albumCoverUrl}
+        x={250 - vinylImageSize}
+        y={250 - vinylImageSize}
+        width={vinylImageSize*2}
+        height={vinylImageSize*2}
+        clip-path="url(#coverClip)"
+      />
+    {/if}
+  </g>
 </svg>
 
 <!----------------------------->
@@ -77,15 +97,22 @@
     overflow: visible;
   }
 
+  .spin {
+    animation: spin var(--spin-duration) linear infinite; 
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(720deg); }
+  }
+
   @media (max-width: 1392px) {
-    svg {
-      width: 320px;
-    }
+    svg { width: 320px; }
   }
 
   @media (max-width: 595px) {
-    svg {
-      width: 250px;
-    }
+    svg { width: 250px; }
   }
 </style>
