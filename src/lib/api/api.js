@@ -48,6 +48,7 @@ export async function getCurrentSongData() {
     image: data.item.album.images[0].url, 
     duration: data.item.duration_ms,
     artists: data.item.artists.map(artist => artist.name).join(', '),
+    status: data.is_playing,
     artistsIds,
     album: data.item.album.name,
     popularity: data.item.popularity, 

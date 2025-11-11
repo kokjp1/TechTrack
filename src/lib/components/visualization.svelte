@@ -31,10 +31,10 @@
   $: glowBlurSize = glowBlurScale($currentSong.artistPopularity);
 
   /* -------------------------------
-  SPIN DURATION OP BASIS VAN SONGDUUR
+  SPIN DURATION OP BASIS VAN SONGDURATIE
+  // Hoe lang 1 rotatie mag duren binnen standaardrange (uitschieters worden geclamped). css rotatie duurt tussen 6 en 16 sec. afhangend van songduratie
   ------------------------------- */
   const typicalRangeSec = [110, 350];
-  // Hoe lang één rotatie mag duren binnen die range
   const animRangeSec = [6, 16];
 
   const durationToSpinSec = scaleLinear()
@@ -43,6 +43,11 @@
     .clamp(true);
 
   $: spinDurationSec = durationToSpinSec((($currentSong.duration) / 1000));
+
+  if ($currentSong.status === false) {
+  const vinyl = document.querySelector("g");
+  vinyl.classList.remove("spin");
+} 
 
 // DEBUG LOGGING
   // $: console.log('[Visualization] artistPopularity:', $currentSong.artistPopularity, '-> glowBlurSize(px):', glowBlurSize);
@@ -60,7 +65,7 @@
   </clipPath>
 
   <!-- Vinyl + cover in één draaiende groep -->
-  <g class="spin" style={`--spin-duration: ${spinDurationSec}s`}>
+  <g class=spin style={`--spin-duration: ${spinDurationSec}s`}>
     <circle
       cx="250"
       cy="250"

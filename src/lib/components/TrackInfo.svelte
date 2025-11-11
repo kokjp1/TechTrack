@@ -56,6 +56,11 @@
           data-tip="Artist Popularity is based on the popularity of all the artist's tracks. Higher number = More popular."
         >🎤 Artist Popularity: {$currentSong.artistPopularity}</p>
       {/if}
+      {#if $currentSong.status === true}
+        <p>▶️ Currently Playing</p>
+      {:else if $currentSong.status === false}
+        <p>⏸️ Song Paused</p>
+      {/if}
 		</section>
 	{/if}
 </div>
