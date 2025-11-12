@@ -3,27 +3,29 @@
 JAVASCRIPT IMPORTS
 ------------------------- */
 
-	import { onMount } from 'svelte';
-	import { browser } from '$app/environment';
-	import { getStoredAccessToken } from '$lib/spotifyAuth';
-	import { currentSong } from '$lib/stores/currentSongDataStore.js';
+    import { onMount } from 'svelte';
+    import { browser } from '$app/environment';
+    import { getStoredAccessToken } from '$lib/spotifyAuth';
+    import { currentSong } from '$lib/stores/currentSongDataStore.js';
+    import SessionControls from '$lib/components/SessionControls.svelte';
+  import SessionList from '$lib/components/SessionList.svelte';
 
 /* -------------------------
 SVELTE COMPONENTS IMPORTS
 ------------------------- */
 
-	import ZeroState from '$lib/components/ZeroState.svelte';
-	import EmptyState from '$lib/components/EmptyState.svelte';
-	import TrackInfo from '$lib/components/TrackInfo.svelte';
-	import AlbumCover from '$lib/components/AlbumCover.svelte';
-	import Visualization from '$lib/components/visualization.svelte';
+    import ZeroState from '$lib/components/ZeroState.svelte';
+    import EmptyState from '$lib/components/EmptyState.svelte';
+    import TrackInfo from '$lib/components/TrackInfo.svelte';
+    import AlbumCover from '$lib/components/AlbumCover.svelte';
+    import Visualization from '$lib/components/visualization.svelte';
 
-	let signedIn = false;
+    let signedIn = false;
 
-	onMount(() => {
-		if (!browser) return;
-		signedIn = !!getStoredAccessToken();
-	});
+    onMount(() => {
+        if (!browser) return;
+        signedIn = !!getStoredAccessToken();
+    });
 </script>
 
 <!------------------------------>
@@ -31,19 +33,21 @@ SVELTE COMPONENTS IMPORTS
 <!-- --------------------------->
 
 {#if signedIn}
-	{#if $currentSong}
-		<main>
-			<TrackInfo />
-			<section>
-				<AlbumCover />
-				<Visualization />
-			</section>
-		</main>
-	{:else}
-		<EmptyState />
-	{/if}
+    <SessionControls />
+  <SessionList />
+    {#if $currentSong}
+        <main>
+            <TrackInfo />
+            <section>
+                <AlbumCover />
+                <Visualization />
+            </section>
+        </main>
+    {:else}
+        <EmptyState />
+    {/if}
 {:else}
-	<ZeroState />
+    <ZeroState />
 {/if}
 
 <!----------------------------->

@@ -6,6 +6,7 @@ import { readable } from 'svelte/store';
 import { browser } from '$app/environment';
 import { getCurrentSongData } from '$lib/api/api.js';
 import { Vibrant } from 'node-vibrant/browser';
+import { sessionStore, updateSessionSongs } from '$lib/stores/sessionStore.js';
 
 export const currentSong = readable(null, (set) => {
   if (!browser) return () => {};
@@ -16,6 +17,40 @@ export const currentSong = readable(null, (set) => {
     try {
       const storableSongData = await getCurrentSongData();
       if (!storableSongData) return;
+
+      // MVP session recorder: push snapshot when recording and track changes
+      {
+        const data = storableSongData;
+        const track = data.data.item;
+        if (track) {
+          // IMPORTANT: perform a single update to avoid clobbering state
+          sessionStore.update(function (session) {
+            if (!session.recording) return session;
+
+            let trackId = track.id;
+            if (!trackId || trackId === session.previousTrackId) return session;
+
+            let singleSessionSong = {
+              id: trackId,
+              title: track.name,
+              artists: (track.artists || []).map(function (a) { return a.name; }),
+              album: track.album && track.album.name,
+              popularity: track.popularity,
+              durationMs: track.duration_ms,
+              image: track.album && track.album.images && track.album.images[0] && track.album.images[0].url,
+              capturedAt: Date.now()
+            };
+
+            let updatedSongs = session.sessionPlayedSongs.slice();
+            updatedSongs.push(singleSessionSong);
+
+            return Object.assign({}, session, {
+              previousTrackId: trackId,
+              sessionPlayedSongs: updatedSongs
+            });
+          });
+        }
+      }
 
       if (storableSongData.image) {
         try {

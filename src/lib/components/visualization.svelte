@@ -44,10 +44,10 @@
 
   $: spinDurationSec = durationToSpinSec((($currentSong.duration) / 1000));
 
-  if ($currentSong.status === false) {
-  const vinyl = document.querySelector("g");
-  vinyl.classList.remove("spin");
-} 
+//   if ($currentSong.status === false) {
+//   const vinyl = document.querySelector("g");
+//   vinyl.classList.remove("spin");
+// } 
 
 // DEBUG LOGGING
   // $: console.log('[Visualization] artistPopularity:', $currentSong.artistPopularity, '-> glowBlurSize(px):', glowBlurSize);

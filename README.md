@@ -3,3 +3,5 @@ https://www.thatsoftwaredude.com/content/12869/a-simple-nextjs-api-folder-struct
 https://www.reddit.com/r/golang/comments/tfmzv6/rest_api_folder_structure/
 
 fix: album+artist line layout
+
+console error fixen voor als er geen song speelt nu
