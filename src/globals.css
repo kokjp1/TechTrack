@@ -43,4 +43,21 @@ html {
 :root, html, body {
     overflow-x: hidden;  
     overflow-x: clip;    
+    overflow-y: hidden;
+}
+
+ @media (max-width: 1392px) {
+    :root, html, body {
+        overflow-x: hidden;  
+        overflow-x: clip;    
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 595px) {
+    :root, html, body {
+        overflow-x: hidden;  
+        overflow-x: clip;    
+        overflow-y: scroll;
+    }
 }

@@ -15,6 +15,7 @@
 		const seconds = Math.floor((duration % 60000) / 1000);
 		return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 	}
+  // ms -> leesbaar formaat omreken formule via ChatGPT
 
 </script>
 

@@ -3,9 +3,13 @@
 </script>
 
 <div class="session-controls">
-  <button on:click={startSession}>Record</button>
-  <button on:click={stopSession}>Stop</button>
-  {#if $sessionStore.recording}
+  <button class="start" on:click={startSession}>
+    {#if $sessionStore.recording === true}Restart
+    {:else}Record
+    {/if}
+  </button>
+  <button class="stop" on:click={stopSession}>Stop</button>
+  {#if $sessionStore.recording === true}
     <span class="status">Recording…</span>
   {/if}
 </div>
@@ -25,5 +29,9 @@
     padding: .4rem .7rem;
     cursor: pointer;
   }
+  button:hover {
+    filter: brightness(1.25);
+		transition: filter 150ms ease-in-out;
+    }
   .status { opacity: .8; }
 </style>

@@ -10,6 +10,7 @@ import { sessionStore, updateSessionSongs } from '$lib/stores/sessionStore.js';
 
 export const currentSong = readable(null, (set) => {
   if (!browser) return () => {};
+  // SSR guard van chatgpt
 
   let timer;
 
@@ -17,41 +18,39 @@ export const currentSong = readable(null, (set) => {
     try {
       const storableSongData = await getCurrentSongData();
       if (!storableSongData) return;
+      
+      const data = storableSongData;
+      const track = data.data.item;
+      // nog naar kijken
+      if (track) {
+        sessionStore.update(function (session) {
+          if (session.recording === false) return session;
 
-      // MVP session recorder: push snapshot when recording and track changes
-      {
-        const data = storableSongData;
-        const track = data.data.item;
-        if (track) {
-          // IMPORTANT: perform a single update to avoid clobbering state
-          sessionStore.update(function (session) {
-            if (!session.recording) return session;
+          let trackId = track.id;
+          if (!trackId || trackId === session.previousTrackId) return session;
 
-            let trackId = track.id;
-            if (!trackId || trackId === session.previousTrackId) return session;
+          let singleSessionSong = {
+            id: trackId,
+            title: track.name,
+            artists: (track.artists || []).map(function (artist) { return artist.name; }),
+            album: track.album && track.album.name,
+            popularity: track.popularity,
+            durationMs: track.duration_ms,
+            image: track.album.images[0].url,
+            capturedAt: Date.now()
+          };
 
-            let singleSessionSong = {
-              id: trackId,
-              title: track.name,
-              artists: (track.artists || []).map(function (a) { return a.name; }),
-              album: track.album && track.album.name,
-              popularity: track.popularity,
-              durationMs: track.duration_ms,
-              image: track.album && track.album.images && track.album.images[0] && track.album.images[0].url,
-              capturedAt: Date.now()
-            };
+          let updatedSongs = session.sessionPlayedSongs.slice();
+          updatedSongs.push(singleSessionSong);
 
-            let updatedSongs = session.sessionPlayedSongs.slice();
-            updatedSongs.push(singleSessionSong);
-
-            return Object.assign({}, session, {
-              previousTrackId: trackId,
-              sessionPlayedSongs: updatedSongs
-            });
+          return Object.assign({}, session, {
+            previousTrackId: trackId,
+            sessionPlayedSongs: updatedSongs
           });
-        }
+        }); 
       }
 
+      // KLEUREN TOEVOEGEN AAN DE SONG STORE OBJECT
       if (storableSongData.image) {
         try {
           const albumCoverColors = await Vibrant.from(storableSongData.image).getPalette();
@@ -88,6 +87,7 @@ export const currentSong = readable(null, (set) => {
   }
 
   refresh();
+
   timer = setInterval(refresh, 1000);
 
   return () => clearInterval(timer);
