@@ -2,27 +2,31 @@
     import { sessionStore } from '$lib/stores/sessionStore.js';
     import { goto } from '$app/navigation';
 
-    function formatDuration(ms) {
-        if (!ms) return 'N/A';
-        const totalSeconds = Math.floor(ms / 1000);
+    /* -------------------------
+    TIJD/DATUM FORMATTEREN
+    ------------------------- */
+    function formatDuration(duration) {
+        const totalSeconds = Math.floor(duration / 1000);
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
         return `${minutes}:${seconds.toString().padStart(2, '0')}`;
     }
-
-    function formatCaptureTime(dateString) {
-        if (!dateString) return 'N/A';
-        const date = new Date(dateString);
+    // formateer functie via ChatGPT //hergebruikt uit trackinfo.svelte
+    function formatCaptureTime(dateParameter) {
+        const date = new Date(dateParameter);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
+    // formateer functie via ChatGPT
 </script>
 
 <div class="container">
     <h1>Session Recap</h1>
     <p>Een overzicht van de nummers die je tijdens deze sessie hebt geluisterd.</p>
-
+    
     <button on:click={() => goto('/')}>Go back home</button>
-
+    <!-------------------------------->
+    <!-- SONG SESSION HISTORY LIJST -->
+    <!-- ----------------------------->
     {#if $sessionStore.sessionPlayedSongs.length === 0}
         <p class="emptyState">You haven't listened to anything yet. Go back to the home page and start a new session :) </p>
         <!-- FALLBACK UITBREIDEN MET ONDERSTE BUTTON VERSTOPPEN!!! -->
@@ -44,7 +48,6 @@
         {/each}
         </ul>
     {/if}
-
     <button on:click={() => goto('/recap/stats')}>
         View Session Statistics
     </button>
@@ -76,15 +79,15 @@
         color: white;
         border: none;
         padding: 10px 20px;
-        border-radius: 20px;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: bold;
-        margin-bottom: 2rem;
-        transition: background-color 0.2s;
+        margin: 2rem 0 2rem 0;
+        transition: filter 0.2s;
     }
 
     button:hover {
-        background-color: #1ed760;
+       filter:brightness(.85);
     }
 
     ul {

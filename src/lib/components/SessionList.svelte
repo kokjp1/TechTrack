@@ -3,6 +3,10 @@
 
     let sidebarOpen = false;
 
+
+/* ------------------------------------------
+RECORDING/NOT RECORDING LABELS STATE CHECKING
+------------------------------------------ */
     let label;
     if (sidebarOpen) {
       label = 'Close History';
@@ -20,6 +24,9 @@
     }
 </script>
 
+<!------------------------------>
+<!-- SIDEBAR TRIGGER/CONTENT -->
+<!-- --------------------------->
 <aside class="session-sidebar" class:open={sidebarOpen === true}>
 	<!-- conditionele class apply van svelte -->
 	 <!-- https://svelte.dev/docs/svelte/class#The-class:-directive -->

@@ -1,1 +1,43 @@
-<h1>statistieken van je sessie</h1>
+<script>
+	import SongDurationPieChart from '$lib/components/SongDurationPieChart.svelte';
+</script>
+
+<main>
+    <h1>Song duratie pie chart</h1>
+    <button class="back-button" on:click={() => history.back()} aria-label="Terug">← Terug</button>
+    <!------------------------------>
+    <!-- CHART SECTIE (LATER CONDITIONEEL LADEN) -->
+    <!-- --------------------------->
+	<SongDurationPieChart />
+
+	<p style="max-width: 400px; text-align: center;">
+		Elke slice is groter als de duur van het liedje langer is.
+	</p>
+</main>
+
+<style>
+	main {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		padding: 2rem;
+	}
+	.back-button {
+		position: absolute;
+		top: 8px;
+		left: 8px;
+		z-index: 10;
+		background: rgba(0,0,0,0.6);
+		color: #fff;
+		border: none;
+		padding: 6px 10px;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 13px;
+		backdrop-filter: blur(4px);
+	}
+	.back-button:hover {
+		opacity: 0.9;
+	}
+</style>
