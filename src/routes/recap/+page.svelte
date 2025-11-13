@@ -23,7 +23,11 @@
 
     <button on:click={() => goto('/')}>Go back home</button>
 
-    <ul>
+    {#if $sessionStore.sessionPlayedSongs.length === 0}
+        <p class="emptyState">You haven't listened to anything yet. Go back to the home page and start a new session :) </p>
+        <!-- FALLBACK UITBREIDEN MET ONDERSTE BUTTON VERSTOPPEN!!! -->
+        {:else}
+        <ul>
         {#each $sessionStore.sessionPlayedSongs as song}
             <li>
                 <img src={song.image} alt={song.title} />
@@ -38,7 +42,12 @@
                 </div>
             </li>
         {/each}
-    </ul>
+        </ul>
+    {/if}
+
+    <button on:click={() => goto('/recap/stats')}>
+        View Session Statistics
+    </button>
 </div>
 
 <style>
