@@ -1,4 +1,5 @@
 import { writable, get } from 'svelte/store';
+import { goto } from '$app/navigation';
 
 export const sessionStore = writable({
   recording: false,
@@ -21,6 +22,7 @@ export function stopSession() {
   sessionStore.update(function (currentSessionState) {
     return Object.assign({}, currentSessionState, { recording: false });
   });
+  goto('/recap');
 //   console.log('recorded session songs:', currentSession.sessionPlayedSongs);
 }
 
