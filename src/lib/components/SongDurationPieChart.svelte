@@ -1,31 +1,25 @@
 <script>
     import { sessionStore } from '$lib/stores/sessionStore.js';
     import { pie, arc } from 'd3-shape';
+    import { select } from 'd3-selection';
+    import { scaleOrdinal } from 'd3-scale';
+    import 'd3-transition';
+    import { onMount } from 'svelte';
 
-	$: songs = $sessionStore.sessionPlayedSongs;
+    $: songs = $sessionStore.sessionPlayedSongs;
 
     function formatDuration(duration) {
         const minutes = Math.floor(duration / 60000);
         const seconds = Math.floor((duration % 60000) / 1000);
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    } //hergebruikt uit trackinfo.svelte'
-    
-    /* -------------------------
-    PIE CHART SETUP 
-    ------------------------- */
+    }
+
     const width = 300;
     const height = 300;
-    const radius = Math.min(width, height) / 2;
+    const margin = 0;
+    const radius = Math.min(width, height) / 2 - margin;
 
-    const pieGenerator = pie().value((d) => d.durationMs);
-    const arcGenerator = arc()
-        .innerRadius(0)
-        .outerRadius(radius);
-
-    $: pieData = pieGenerator(songs);
-
-    // PIECHART KLEUREN
-    const colors = [
+    const color = scaleOrdinal([
         '#1DB954',
         '#1ed760',
         '#1aa34a',
@@ -36,133 +30,89 @@
         '#3ee98b',
         '#b7f7d8',
         '#eafaf1'
-    ];
-
-    function getColor(index) {
-        return colors[index % colors.length];
-    }
-
-    /* -------------------------
-    TOOLTIP SETUP
-    ------------------------- */
-
-    let tooltipVisible = false;
-	let tooltipSong = null;
-    let tooltipLeft = 0;
-    let tooltipTop = 0;
-    // https://d3-graph-gallery.com/graph/interactivity_tooltip.html
+    ]);
 
     let container;
+    let tooltip;
+    let activeSlice = null; // { title, durationMs }
 
-    function showTooltip(e, song) {
-        const pieChartContainer = container.getBoundingClientRect();
-		tooltipSong = song;
-		tooltipVisible = true;
-        tooltipLeft = e.clientX - pieChartContainer.left + 10;
-        tooltipTop = e.clientY - pieChartContainer.top + 10;
-    }
+    onMount(() => {
+        const pieChart = select(container);
 
-    function moveTooltip(e) {
-        const pieChartContainer = container.getBoundingClientRect();
-        tooltipLeft = e.clientX - pieChartContainer.left + 10;
-        tooltipTop = e.clientY - pieChartContainer.top + 10;
-    }
+        const svg = pieChart
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height)
+            .append('g')
+            .attr('transform', `translate(${width / 2}, ${height / 2})`);
 
-    function hideTooltip() {
-		tooltipVisible = false;
-		tooltipSong = null;
-    }
+        const pieGenerator = pie().value((durationData) => durationData.durationMs);
+        const sliceGenerator = arc().innerRadius(0).outerRadius(radius);
+
+        const paths = svg
+            .selectAll('path.slice')
+            .data(pieGenerator(songs))
+            .join('path')
+            .attr('class', 'slice')
+            .attr('d', sliceGenerator)
+            .attr('fill', (d, i) => color(i))
+            .attr('stroke', '#003c04')
+            .style('stroke-width', '1px')
+            .style('opacity', 0.9);
+
+        // native title
+        paths
+            .append('title')
+            .text((d) => `${d.data.title} — ${formatDuration(d.data.durationMs)}`);
+
+        // TOOLTIP EVENTS: alleen positie & state via d3, geen tekst
+        paths
+            .on('mouseover touchstart', (event, d) => {
+                activeSlice = d.data; // Svelte zet tekst in HTML
+                select(tooltip)
+                    .transition()
+                    .duration(175)
+                    .style('opacity', 1);
+            })
+            .on('mousemove', (event) => {
+                select(tooltip)
+                    .style('left', event.pageX + 15 + 'px')
+                    .style('top', event.pageY + 15 + 'px');
+            })
+            .on('mouseout', () => {
+                activeSlice = null;
+                select(tooltip).style('opacity', 0);
+            });
+
+        select('body').on('touchend', () => {
+            activeSlice = null;
+            select(tooltip).style('opacity', 0);
+        });
+    });
 </script>
 
-<!------------------------------>
-<!-- PIE CHART SVG ELEMENT -->
-<!-- --------------------------->
-<div bind:this={container}>
-    <!-- https://svelte.dev/docs/svelte/bind -->
-    <svg {width} {height} viewBox={`0 0 ${width} ${height}`}>
-        <g transform={`translate(${width / 2}, ${height / 2})`}>
-            {#each pieData as slice, index}
-                <path
-                    d={arcGenerator(slice)}
-                    fill={getColor(index)}
-                    on:mouseenter={(e) => showTooltip(e, songs[index])}
-                    on:mousemove={moveTooltip}
-                    on:mouseleave={hideTooltip}
-                    role="graphics-symbol"
-                    aria-label={`${songs[index].title} — ${songs[index].durationMs} ms`}>
-                    <!-- fallback native title (optioneel) -->
-                     <!-- https://d3js.org/d3-shape/arc#arcs -->
-                      <!-- https://d3js.org/d3-shape/pie -->
-                </path>
-            {/each}
-        </g>
-    </svg>
+<div bind:this={container}></div>
 
-    <!------------------------------>
-    <!-- TOOLTIP DOM ELEMENT -->
-    <!-- --------------------------->
-	{#if tooltipVisible && tooltipSong}
-		<div class="tooltip" style={`position:absolute; left:${tooltipLeft}px; top:${tooltipTop}px;`}>
-			{#if tooltipSong.image}
-				<img src={tooltipSong.image} alt={tooltipSong.title} class="tooltip-image" />
-			{/if}
-			<div class="tooltip-text">
-				<div class="tooltip-title">{tooltipSong.title}</div>
-				<div class="tooltip-duration">{formatDuration(tooltipSong.durationMs)}</div>
-			</div>
-		</div>
-	{/if}
+<div id="tooltip" bind:this={tooltip}>
+    {#if activeSlice}
+        <span>{activeSlice.title}: {formatDuration(activeSlice.durationMs)}</span>
+    {/if}
 </div>
 
 <style>
-	div:nth-of-type(1) {
-		position: relative;
-		display: inline-block;
-	}
-	path {
-		stroke: #003c04;
-		stroke-width: 1px;
-		transition: transform 0.2s;
-		scale: 0.9;
-	}
-	path:hover {
-		opacity: 0.8;
-		transform: scale(1.025);
-	}
+    div:nth-of-type(1) {
+        position: relative;
+        display: inline-block;
+    }
 
-	.tooltip {
-		background: rgba(0, 0, 0, 0.85);
-		color: #fff;
-		padding: 6px 8px;
-		border-radius: 4px;
-		font-size: 12px;
-		pointer-events: none;
-		white-space: nowrap;
-		transform: translateY(-50%);
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-		display: flex;
-		align-items: center;
-	}
-	.tooltip-image {
-		width: 40px;
-		height: 40px;
-		object-fit: cover;
-		border-radius: 4px;
-		margin-right: 8px;
-		flex-shrink: 0;
-	}
-	.tooltip-text {
-		display: flex;
-		flex-direction: column;
-	}
-	.tooltip-title {
-		font-weight: 600;
-		font-size: 12px;
-        margin-bottom:0.5em;
-	}
-	.tooltip-duration {
-		font-size: 11px;
-		opacity: 0.9;
-        margin-top:0.25em;
-	}
+    #tooltip {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.8rem;
+    }
 </style>
