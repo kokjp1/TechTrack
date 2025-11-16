@@ -1,118 +1,267 @@
 <script>
-    import { sessionStore } from '$lib/stores/sessionStore.js';
-    import { pie, arc } from 'd3-shape';
-    import { select } from 'd3-selection';
-    import { scaleOrdinal } from 'd3-scale';
-    import 'd3-transition';
-    import { onMount } from 'svelte';
+	import * as d3 from 'd3';
+	import { sessionStore } from '$lib/stores/sessionStore.js';
+	import 'd3-transition';
 
-    $: songs = $sessionStore.sessionPlayedSongs;
+	let container;
+	let sessionChart;
+	let legendData = [];
 
-    function formatDuration(duration) {
-        const minutes = Math.floor(duration / 60000);
-        const seconds = Math.floor((duration % 60000) / 1000);
-        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    }
+	// TOOLTIP STATE (simpel: alleen tekst)
+	let tooltip;
+	let activeSlice = null;
 
-    const width = 300;
-    const height = 300;
-    const margin = 0;
-    const radius = Math.min(width, height) / 2 - margin;
+	function formatDuration(duration) {
+		const minutes = Math.floor(duration / 60000);
+		const seconds = Math.floor((duration % 60000) / 1000);
+		return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+	}
 
-    const color = scaleOrdinal([
-        '#1DB954',
-        '#1ed760',
-        '#1aa34a',
-        '#25c865',
-        '#12833a',
-        '#2fd77a',
-        '#158443',
-        '#3ee98b',
-        '#b7f7d8',
-        '#eafaf1'
-    ]);
+	/* ------------------------------------------------
+DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
+------------------------------------------------- */
 
-    let container;
-    let tooltip;
-    let activeSlice = null; // { title, durationMs }
+	function buildTreemapData(session) {
+		const songs = session?.sessionPlayedSongs ?? [];
 
-    onMount(() => {
-        const pieChart = select(container);
+		return {
+			name: 'root',
+			children: [
+				{
+					name: 'Session',
+					children: songs.map((song) => ({
+						name: song.title || 'Unknown',
+						value: song.durationMs || song.duration || 0,
+						id: song.id,
+						artists: song.artists,
+						album: song.album,
+						genre: song.genre || 'Unknown',
+						durationMs: song.durationMs || song.duration || 0
+					}))
+				}
+			]
+		};
+	}
 
-        const svg = pieChart
-            .append('svg')
-            .attr('width', width)
-            .attr('height', height)
-            .append('g')
-            .attr('transform', `translate(${width / 2}, ${height / 2})`);
+	/* -----------------------------------------------------
+    D3 TREEMAP CODE | https://observablehq.com/@d3/treemap/2
+    ------------------------------------------------------ */
 
-        const pieGenerator = pie().value((durationData) => durationData.durationMs);
-        const sliceGenerator = arc().innerRadius(0).outerRadius(radius);
+	function renderTreemap(data, tile = d3.treemapDice) {
+		// dice = horizontaal, slice = verticaal
+		// vorige chart checken en evt. verwijderen
+		if (sessionChart && sessionChart.parentNode) {
+			sessionChart.parentNode.removeChild(sessionChart);
+			sessionChart = null;
+		}
 
-        const paths = svg
-            .selectAll('path.slice')
-            .data(pieGenerator(songs))
-            .join('path')
-            .attr('class', 'slice')
-            .attr('d', sliceGenerator)
-            .attr('fill', (d, i) => color(i))
-            .attr('stroke', '#003c04')
-            .style('stroke-width', '1px')
-            .style('opacity', 0.9);
+		const width = 1154;
+		const height = 554;
 
-        // native title
-        paths
-            .append('title')
-            .text((d) => `${d.data.title} — ${formatDuration(d.data.durationMs)}`);
+		const allGenres = []; // array om te gebruiken voor de visualisatie
+		data.children[0]?.children?.forEach((song) => {
+			const genre = song.genre || 'Unknown';
+			if (!allGenres.includes(genre)) allGenres.push(genre);
+		});
 
-        // TOOLTIP EVENTS: alleen positie & state via d3, geen tekst
-        paths
-            .on('mouseover touchstart', (event, d) => {
-                activeSlice = d.data; // Svelte zet tekst in HTML
-                select(tooltip)
-                    .transition()
-                    .duration(175)
-                    .style('opacity', 1);
-            })
-            .on('mousemove', (event) => {
-                select(tooltip)
-                    .style('left', event.pageX + 15 + 'px')
-                    .style('top', event.pageY + 15 + 'px');
-            })
-            .on('mouseout', () => {
-                activeSlice = null;
-                select(tooltip).style('opacity', 0);
-            });
+		// kleur-schaal op basis van genres (blijft nodig voor de treemap zelf)
+		const color = d3.scaleOrdinal(allGenres, d3.schemeCategory10);
+		// https://d3js.org/d3-scale-chromatic/categorical
 
-        select('body').on('touchend', () => {
-            activeSlice = null;
-            select(tooltip).style('opacity', 0);
-        });
-    });
+		const root = d3.treemap().tile(tile).size([width, height]).padding(1).round(true)(
+			d3.hierarchy(data).sum((d) => {
+				return d.id ? 1 : 0;
+			})
+		); //leaf size, momenteel alles even groot
+
+		const svg = d3
+			.create('svg')
+			.attr('viewBox', [0, 0, width, height])
+			.attr('width', width)
+			.attr('height', height)
+			.attr('style', 'max-width: 100%; height: auto;');
+
+		const leaf = svg
+			.selectAll('g')
+			.data(root.leaves())
+			.join('g')
+			.attr('transform', (d) => `translate(${d.x0},${d.y0})`);
+
+		const format = d3.format(',d');
+		leaf.append('title').text(
+			(d) =>
+				`${d.data.name} (${d.data.genre || 'Unknown genre'})\n` +
+				`${d
+					.ancestors()
+					.reverse()
+					.map((d) => d.data.name)
+					.join('.')} ` +
+				`\n${format(d.value)}`
+		);
+
+		const rects = leaf
+			.append('rect')
+			.attr('id', (d) => {
+				const uid = `leaf-${Math.random().toString(36).slice(2)}`;
+				d.leafUid = { id: uid, href: `#${uid}` };
+				return d.leafUid.id;
+			})
+			.attr('fill', (d) => {
+				const genre = d.data.genre || 'Unknown';
+				return color(genre);
+			})
+			.attr('fill-opacity', 0.7)
+			.attr('width', (d) => d.x1 - d.x0)
+			.attr('height', (d) => d.y1 - d.y0);
+
+		leaf
+			.append('clipPath')
+			.attr('id', (d) => {
+				const uid = `clip-${Math.random().toString(36).slice(2)}`;
+				d.clipUid = uid;
+				return d.clipUid;
+			})
+			.append('use')
+			.attr('xlink:href', (d) => d.leafUid.href);
+
+		leaf
+			.append('text')
+			.attr('clip-path', (d) => `url(#${d.clipUid})`)
+			.selectAll('tspan')
+			.data((d) => {
+				const parts = d.data.name.split(/(?=[A-Z][a-z])|\s+/g);
+				const label = `${d.data.genre || 'Unknown'}`;
+				return parts.concat(label);
+			})
+			.join('tspan')
+			.attr('x', 3)
+			.attr('y', (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.1 + i * 0.9}em`)
+			.attr('fill-opacity', (d, i, nodes) => (i === nodes.length - 1 ? 0.7 : null))
+			.text((d) => d);
+
+		/* -----------------------------------------------------------------
+    TOOLTIP CODE | https://codepen.io/dandevri/pen/azdrEQb?editors=1010
+    ----------------------------------------------------------------- */
+		rects
+			.on('mouseover touchstart', (event, d) => {
+				// data meegeven die je in de tooltip wilt
+				activeSlice = {
+					artist: d.data.artists,
+					title: d.data.name,
+					genre: d.data.genre || 'Unknown'
+				};
+				d3.select(tooltip).transition().duration(175).style('opacity', 1);
+			})
+			.on('mousemove', (event) => {
+				d3.select(tooltip)
+					.style('left', event.pageX + 15 + 'px')
+					.style('top', event.pageY + 15 + 'px');
+			})
+			.on('mouseout', () => {
+				activeSlice = null;
+				d3.select(tooltip).style('opacity', 0);
+			});
+
+		d3.select('body').on('touchend', () => {
+			activeSlice = null;
+			d3.select(tooltip).style('opacity', 0);
+		});
+
+		/* ---------------------------------
+    LEGENDA CODE 
+    --------------------------------- */
+		legendData = allGenres.map((genre) => {
+			return {
+				name: genre,
+				color: color(genre)
+			};
+		});
+
+		/* ---------------------------------
+    SVG FINALISEREN EN AAN DOM TOEVOEGEN
+    --------------------------------- */
+		sessionChart = svg.node();
+		if (container) {
+			container.appendChild(sessionChart);
+		}
+	}
+
+	$: if (container) {
+		const data = buildTreemapData($sessionStore);
+		renderTreemap(data);
+	}
 </script>
 
-<div bind:this={container}></div>
+<!---------------------------------------->
+<!-- TREEMAP & LEGENDA DOM ELEMENT-------->
+<!-- + div gelijkstellen aan de container die met D3 gemaakt is via bind:this -->
+<!-- ------------------------------------->
+
+<div bind:this={container} style="width: 100%; height: 100%;"></div>
 
 <div id="tooltip" bind:this={tooltip}>
-    {#if activeSlice}
-        <span>{activeSlice.title}: {formatDuration(activeSlice.durationMs)}</span>
-    {/if}
+	{#if activeSlice}
+		<span>{activeSlice.artist} - {activeSlice.title} | {activeSlice.genre}</span>
+	{/if}
 </div>
 
-<style>
-    div:nth-of-type(1) {
-        position: relative;
-        display: inline-block;
-    }
+<div class="legend-container">
+	{#each legendData as item}
+		<div class="legend-item">
+			<span class="legend-color-box" style="background-color: {item.color}"></span>
+			<span class="legend-label">{item.name}</span>
+		</div>
+	{/each}
+</div>
 
-    #tooltip {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-        background: rgba(0, 0, 0, 0.85);
-        color: white;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        font-size: 0.8rem;
-    }
+<p>
+	Wow! Je hebt in totaal "aantal liedjes" geluisterd sinds "tijdstip". Je sessie bestond
+	voornamelijk uit: "genre". Maarliefst "deel/geheel" liedjes waren "genre". Je tweede populairste
+	genre was "genre" met "deel/geheel"
+</p>
+
+<style>
+	div {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.legend-container {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 10px 20px;
+		width: 100%;
+		max-width: 1154px;
+		padding: 10px 0;
+	}
+	.legend-item {
+		display: flex;
+		align-items: center;
+	}
+	.legend-color-box {
+		width: 14px;
+		height: 14px;
+		margin-right: 8px;
+		border: 1px solid #000000;
+		border-radius: 3px;
+	}
+
+	.legend-label {
+		font-weight: 800;
+		color: white;
+		font-size: 12px;
+	}
+
+	#tooltip {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+		background: rgba(0, 0, 0, 0.85);
+		color: white;
+		padding: 0.25rem 0.5rem;
+		border-radius: 0.25rem;
+		font-size: 0.8rem;
+	}
 </style>

@@ -3,16 +3,11 @@
 </script>
 
 <main>
-    <h1>Song duratie pie chart</h1>
+    <h1>🧬 Het DNA van je sessie. 🧬</h1>
     <button class="back-button" on:click={() => history.back()} aria-label="Terug">← Terug</button>
-    <!------------------------------>
-    <!-- CHART SECTIE (LATER CONDITIONEEL LADEN) -->
-    <!-- --------------------------->
+
 	<SongDurationPieChart />
 
-	<p style="max-width: 400px; text-align: center;">
-		Elke slice is groter als de duur van het liedje langer is.
-	</p>
 </main>
 
 <style>

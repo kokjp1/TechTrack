@@ -4,4 +4,20 @@ https://www.reddit.com/r/golang/comments/tfmzv6/rest_api_folder_structure/
 
 fix: album+artist line layout
 
+https://github.com/edeno/d3-save-svg/blob/gh-pages/README.md
+
 console error fixen voor als er geen song speelt nu
+
+dingen om te doen nog:
+
+* song image toevoegen aan tooltip bij treemap
+* treemap kleuren zelf doen
+* textueel verhaaltje templating fixen onder treemap
+* record/stop button netter positioneren (en history button)
+* terug button mooi maken op treemap pagina
+* filters/sorteeropties toevoegen aan treemap
+* buttons op recap pagina mooier maken
+* mobiele responsiveness checken
+   * zorgen dat de barcode misschien verticaal word op mobile word (slice ipv dice + meer height)
+* code opschonen
+* popularity tooltips netter maken (niet openen als je over de area hovert)

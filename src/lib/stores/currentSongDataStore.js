@@ -33,6 +33,17 @@ export const currentSong = readable(null, (set) => {
           let trackId = track.id;
           if (!trackId || trackId === session.previousTrackId) return session;
 
+          // --- genre bepalen op basis van artistsDetails uit storableSongData ---
+          // storableSongData.artistsDetails: [{ id, name, popularity, genres, image }]
+          let trackGenre = 'Unknown';
+          if (Array.isArray(data.artistsDetails) && data.artistsDetails.length > 0) {
+            const mainArtist = data.artistsDetails[0];
+            if (Array.isArray(mainArtist.genres) && mainArtist.genres.length > 0) {
+              trackGenre = mainArtist.genres[0]; // pak gewoon eerste genre van eerste artiest
+            }
+          }
+          // ---------------------------------------------------------------
+
           let singleSessionSong = {
             id: trackId,
             title: track.name,
@@ -41,7 +52,8 @@ export const currentSong = readable(null, (set) => {
             popularity: track.popularity,
             durationMs: track.duration_ms,
             image: track.album.images[0].url,
-            capturedAt: Date.now()
+            capturedAt: Date.now(),
+            genre: trackGenre                 // <--- NIEUW veld
           };
 
           let updatedSongs = session.sessionPlayedSongs.slice();
