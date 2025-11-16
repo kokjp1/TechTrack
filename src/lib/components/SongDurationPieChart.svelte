@@ -43,15 +43,45 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		};
 	}
 
+	// telt hoe vaak elke artiest voorkomt
+	function buildArtistFrequency(songs) {
+		const artistAmount = new Map();
+		for (const song of songs) {
+			const artists = Array.isArray(song.artists) ? song.artists : [song.artists ?? 'Unknown'];
+			for (const artist of artists) {
+				if (!artist) continue;
+				const key = artist.name ?? artist; 
+				artistAmount.set(key, (artistAmount.get(key) || 0) + 1);
+			}
+		}
+		return artistAmount; // Map(artistName -> count)
+	}
+
+	// telt hoe vaak elk genre voorkomt
+	function buildGenreFrequency(songs) {
+		const genreAmount = new Map();
+		for (const song of songs) {
+			const genre = song.genre || 'Unknown';
+			genreAmount.set(genre, (genreAmount.get(genre) || 0) + 1);
+		}
+		return genreAmount; // Map(genre -> count)
+	}
+
 	/* -----------------------------------------------------
     D3 TREEMAP CODE | https://observablehq.com/@d3/treemap/2
     ------------------------------------------------------ */
 
     // standaard: NIET sorteren
-    let sortByDuration = false;
+    let sortMode = 'none'; 
+    // 'none' | 'duration' | 'artistAmount' | 'genreAmount'
 
     function toggleSort() {
-        sortByDuration = !sortByDuration;
+        // voorbeeld: cyclen tussen verschillende sorteringen
+        if (sortMode === 'none') sortMode = 'duration';
+        else if (sortMode === 'duration') sortMode = 'artistAmount';
+        else if (sortMode === 'artistAmount') sortMode = 'genreAmount';
+        else sortMode = 'none';
+
         const data = buildTreemapData($sessionStore);
         renderTreemap(data);
     }
@@ -77,6 +107,12 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		const color = d3.scaleOrdinal(allGenres, d3.schemeCategory10);
 		// https://d3js.org/d3-scale-chromatic/categorical
 
+		const songs = data.children[0]?.children ?? [];
+
+		// telling functie aanroepen en maken van artiest voorkomendheid en genre voorkomendheid
+		const artistAmount = buildArtistFrequency(songs);
+		const genreAmount = buildGenreFrequency(songs);
+
 		const root = d3
 			.treemap()
 			.tile(tile)
@@ -86,12 +122,51 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 				d3
 					.hierarchy(data)
 					.sum(d => 1)
-					// alleen sort gebruiken als sortByDuration true is
 					.sort((a, b) => {
-						if (!sortByDuration) return 0; // geen sort, originele volgorde
-						const aDur = a.data?.durationMs ?? 0;
-						const bDur = b.data?.durationMs ?? 0;
-						return bDur - aDur;
+						// voor zover ik weet werkt de javascript/d3 sort functie zo dat je twee elementen tegen elkaar gaat afwegen, en om dat te doen moet je wel twee objecten hebben (a & b). vervolgens handelt d3/javascript het loopen door de hele lijst zelf af.
+						const aSong = a.data;
+						const bSong = b.data;
+
+						if (sortMode === 'none') {
+							return 0; // originele volgorde
+						}
+
+						if (sortMode === 'duration') {
+							const aDur = aSong?.durationMs ?? 0;
+							const bDur = bSong?.durationMs ?? 0;
+							return bDur - aDur; // lang -> kort
+						}
+
+						if (sortMode === 'artistAmount') {
+							const aArtists = Array.isArray(aSong?.artists) ? aSong.artists : [aSong?.artists ?? 'Unknown'];
+							const bArtists = Array.isArray(bSong?.artists) ? bSong.artists : [bSong?.artists ?? 'Unknown'];
+
+							// neem simpelweg de eerste artiest als "hoofd"-artiest
+							const aArtistName = aArtists[0]?.name ?? aArtists[0] ?? 'Unknown';
+							const bArtistName = bArtists[0]?.name ?? bArtists[0] ?? 'Unknown';
+
+							const aCount = artistAmount.get(aArtistName) || 0;
+							const bCount = artistAmount.get(bArtistName) || 0;
+
+							// eerst sorteren op frequentie (hoog -> laag)
+							if (bCount !== aCount) return bCount - aCount;
+
+							// dan alfabetisch als tie-breaker (optioneel)
+							return d3.ascending(aArtistName, bArtistName);
+						}
+
+						if (sortMode === 'genreAmount') {
+							const aGenre = aSong?.genre || 'Unknown';
+							const bGenre = bSong?.genre || 'Unknown';
+
+							const aCount = genreAmount.get(aGenre) || 0;
+							const bCount = genreAmount.get(bGenre) || 0;
+
+							if (bCount !== aCount) return bCount - aCount;
+							return d3.ascending(aGenre, bGenre);
+						}
+
+						return 0;
 					})
 			); // ChatGPT heeft me geholpen met de sorteerfunctie
 
@@ -220,7 +295,15 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 <!-- ------------------------------------->
 
 <button on:click={toggleSort}>
-    {sortByDuration ? 'Sorteer: Standaard' : 'Sorteer: duur (lang → kort)'}
+    {#if sortMode === 'none'}
+        Sorteer: (geen)
+    {:else if sortMode === 'duration'}
+        Sorteer: duur (lang → kort)
+    {:else if sortMode === 'artistAmount'}
+        Sorteer: artiest (meest voorkomend → minst)
+    {:else if sortMode === 'genreAmount'}
+        Sorteer: genre (meest voorkomend → minst)
+    {/if}
 </button>
 
 <div bind:this={container} style="width: 100%; height: 100%;"></div>
