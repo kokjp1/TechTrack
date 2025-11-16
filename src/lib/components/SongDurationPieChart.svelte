@@ -47,6 +47,15 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
     D3 TREEMAP CODE | https://observablehq.com/@d3/treemap/2
     ------------------------------------------------------ */
 
+    // standaard: NIET sorteren
+    let sortByDuration = false;
+
+    function toggleSort() {
+        sortByDuration = !sortByDuration;
+        const data = buildTreemapData($sessionStore);
+        renderTreemap(data);
+    }
+
 	function renderTreemap(data, tile = d3.treemapDice) {
 		// dice = horizontaal, slice = verticaal
 		// vorige chart checken en evt. verwijderen
@@ -68,11 +77,23 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		const color = d3.scaleOrdinal(allGenres, d3.schemeCategory10);
 		// https://d3js.org/d3-scale-chromatic/categorical
 
-		const root = d3.treemap().tile(tile).size([width, height]).padding(1).round(true)(
-			d3.hierarchy(data).sum((d) => {
-				return d.id ? 1 : 0;
-			})
-		); //leaf size, momenteel alles even groot
+		const root = d3
+			.treemap()
+			.tile(tile)
+			.size([width, height])
+			.padding(1)
+			.round(true)(
+				d3
+					.hierarchy(data)
+					.sum(d => 1)
+					// alleen sort gebruiken als sortByDuration true is
+					.sort((a, b) => {
+						if (!sortByDuration) return 0; // geen sort, originele volgorde
+						const aDur = a.data?.durationMs ?? 0;
+						const bDur = b.data?.durationMs ?? 0;
+						return bDur - aDur;
+					})
+			); // ChatGPT heeft me geholpen met de sorteerfunctie
 
 		const svg = d3
 			.create('svg')
@@ -139,7 +160,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 			.attr('fill-opacity', (d, i, nodes) => (i === nodes.length - 1 ? 0.7 : null))
 			.text((d) => d);
 
-		/* -----------------------------------------------------------------
+	/* -----------------------------------------------------------------
     TOOLTIP CODE | https://codepen.io/dandevri/pen/azdrEQb?editors=1010
     ----------------------------------------------------------------- */
 		rects
@@ -148,7 +169,8 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 				activeSlice = {
 					artist: d.data.artists,
 					title: d.data.name,
-					genre: d.data.genre || 'Unknown'
+					genre: d.data.genre || 'Unknown',
+					duration: formatDuration(d.data.durationMs || 0)
 				};
 				d3.select(tooltip).transition().duration(175).style('opacity', 1);
 			})
@@ -197,11 +219,15 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 <!-- + div gelijkstellen aan de container die met D3 gemaakt is via bind:this -->
 <!-- ------------------------------------->
 
+<button on:click={toggleSort}>
+    {sortByDuration ? 'Sorteer: Standaard' : 'Sorteer: duur (lang → kort)'}
+</button>
+
 <div bind:this={container} style="width: 100%; height: 100%;"></div>
 
 <div id="tooltip" bind:this={tooltip}>
 	{#if activeSlice}
-		<span>{activeSlice.artist} - {activeSlice.title} | {activeSlice.genre}</span>
+		<span>{activeSlice.artist} - {activeSlice.title} | {activeSlice.genre} | {activeSlice.duration}</span>
 	{/if}
 </div>
 
