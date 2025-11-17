@@ -17,7 +17,7 @@
 		return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 	}
 
-	/* ------------------------------------------------
+/* ------------------------------------------------
 DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 ------------------------------------------------- */
 
@@ -196,19 +196,39 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		);
 
 		const rects = leaf
-			.append('rect')
-			.attr('id', (d) => {
-				const uid = `leaf-${Math.random().toString(36).slice(2)}`;
-				d.leafUid = { id: uid, href: `#${uid}` };
-				return d.leafUid.id;
-			})
-			.attr('fill', (d) => {
-				const genre = d.data.genre || 'Unknown';
-				return color(genre);
-			})
-			.attr('fill-opacity', 0.7)
-			.attr('width', (d) => d.x1 - d.x0)
-			.attr('height', (d) => d.y1 - d.y0);
+			.selectAll('rect')
+			.data(d => [d])
+			.join(
+				enter => enter
+					.append('rect')
+					.attr('id', (d) => {
+						const uid = `leaf-${Math.random().toString(36).slice(2)}`;
+						d.leafUid = { id: uid, href: `#${uid}` };
+						return d.leafUid.id;
+					})
+					.attr('fill', (d) => {
+						const genre = d.data.genre || 'Unknown';
+						return color(genre);
+					})
+					.attr('fill-opacity', 0.7)
+					.attr('width', 0)
+					.attr('height', 0)
+					.call(enter =>
+						enter.transition().duration(500)
+							.attr('width', (d) => d.x1 - d.x0)
+							.attr('height', (d) => d.y1 - d.y0)
+					),
+				update => update
+					.call(update =>
+						update.transition().duration(500)
+							.attr('width', (d) => d.x1 - d.x0)
+							.attr('height', (d) => d.y1 - d.y0)
+					),
+				exit => exit
+					.call(exit =>
+						exit.transition().duration(300).attr('width', 0).attr('height', 0).remove()
+					)
+			);
 
 		leaf
 			.append('clipPath')

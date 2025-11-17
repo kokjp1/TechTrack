@@ -21,3 +21,5 @@ dingen om te doen nog:
    * zorgen dat de barcode misschien verticaal word op mobile word (slice ipv dice + meer height)
 * code opschonen
 * popularity tooltips netter maken (niet openen als je over de area hovert)
+* vinyl pauzeren als het liedje op pauze staat
+* pause play next contols
