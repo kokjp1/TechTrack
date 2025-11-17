@@ -1,5 +1,6 @@
 <script>
 	import { sessionStore, startSession, stopSession } from '$lib/stores/sessionStore.js';
+	import SessionList from '$lib/components/SessionList.svelte';
 </script>
 
 <div class="session-controls">
@@ -9,21 +10,24 @@
 		{/if}
 	</button>
 	{#if $sessionStore.recording === true}
-	<button class="stop" on:click={stopSession}>Stop</button>
+		<button class="stop" on:click={stopSession}>Stop</button>
 	{/if}
 	{#if $sessionStore.recording === true}
 		<span class="status">
 			<span class="status-label">
 				<span class="ring-container"
-					><span class="ringring"></span><span class="circle"></span></span>
+					><span class="ringring"></span><span class="circle"></span></span
+				>
 				Recording…
 			</span>
 		</span>
 		<!-- https://codepen.io/vram1980/pen/oNvWdO -->
 	{/if}
+	<SessionList />
 </div>
 
 <style>
+
 	.ring-container {
 		position: relative;
 		width: 25px;
@@ -48,23 +52,23 @@
 		position: absolute;
 		left: -2.5px;
 		top: -2px;
-    animation: pulsate 1s ease-out infinite;
+		animation: pulsate 1s ease-out infinite;
 		-webkit-animation: pulsate 1s ease-out infinite;
 		opacity: 0;
 	}
-  @keyframes pulsate {
-    0% {
-      transform: scale(0.1, 0.1);
-      opacity: 0;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% {
-      transform: scale(1.2, 1.2);
-      opacity: 0;
-    }
-  }
+	@keyframes pulsate {
+		0% {
+			transform: scale(0.1, 0.1);
+			opacity: 0;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			transform: scale(1.2, 1.2);
+			opacity: 0;
+		}
+	}
 
 	@-webkit-keyframes pulsate {
 		0% {
@@ -84,6 +88,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		flex-wrap: wrap; 
 	}
 
 	.status {
@@ -110,7 +115,7 @@
 	}
 
 	.stop {
-		font-weight:800;
+		font-weight: 800;
 		background-color: #640303;
 		color: #bd1919;
 		border-color: #380000;

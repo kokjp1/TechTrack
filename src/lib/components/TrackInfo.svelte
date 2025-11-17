@@ -80,10 +80,18 @@
 			</div>
 			<div class="session-container">
 				<SessionControls />
-				<SessionList />
+				<!-- <SessionList /> -->
 			</div>
 		</section>
 	{/if}
+  <details>
+		<summary>ℹ️ Session System Tutorial</summary>
+		<p>
+			Use the "Record" button to start a listening session. While recording, all songs you play will
+			be logged in your session history. Click "Stop" to end the session. You can view your
+			listening history by opening the sidebar.
+		</p>
+	</details>
 </div>
 
 <!----------------------------->
@@ -91,6 +99,42 @@
 <!-- --------------------------->
 
 <style>
+
+  	:root {
+		interpolate-size: allow-keywords;
+	}
+	details {
+		overflow: hidden;
+		background-color: #2a2a2a;
+		padding: .5em;
+		border-radius: 6px;
+    margin-top:1em;
+	}
+  
+  details * {
+    margin:0;
+    padding:.5em;
+  }
+
+  details > p {
+      padding-block:1rem;
+  }
+
+  details summary {
+      cursor:pointer;
+  }
+
+	details::details-content {
+		block-size: 0;
+		transition:
+			block-size 1s,
+			content-visibility 1s allow-discrete;
+	}
+
+	details[open]::details-content {
+		block-size: auto;
+	}
+
 	.player-controls {
 		display: none;
 	}
@@ -138,7 +182,6 @@
 		white-space: nowrap;
 	}
 
-	/* NEW: row wrapper so a pair stays on one line */
 	.info-row {
 		display: flex;
 		flex-direction: row;
@@ -148,7 +191,7 @@
 	.popularity {
 		position: relative;
 		cursor: help;
-		display: inline-block; /* make area tighter around text */
+		display: inline-block; 
 	}
 
 	.popularity[data-tip]::after {
@@ -185,9 +228,9 @@
 	}
 
 	@media (max-width: 1392px) {
-		div {
-			align-items: center;
-		}
+    div{
+      min-width:345px;
+    }
 		h1 {
 			font-size: 3em;
 			text-align: center;
@@ -212,6 +255,10 @@
 			justify-content: space-between;
 			flex-wrap: nowrap;
 		}
+
+    details {
+    max-width:325px;
+    }
 	}
 
 	@media (max-width: 595px) {
@@ -237,5 +284,8 @@
 			white-space: normal;
 			text-align: center;
 		}
+    details {
+      max-width:325px;
+    }
 	}
 </style>
