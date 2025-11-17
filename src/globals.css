@@ -1,8 +1,18 @@
+/* Ensure SF Pro is used everywhere by default */
+*,
+*::before,
+*::after {
+    font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui,
+        'Segoe UI', sans-serif !important;
+}
+
+/* Existing rules */
 html {
     background-color: #121212;
-    font-family: 'SF Pro Text', Arial, sans-serif;
-    color:white;
-    max-width: 100%;    
+    font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui,
+        'Segoe UI', sans-serif;
+    color: white;
+    max-width: 100%;
 }
 
 @font-face {
@@ -40,24 +50,30 @@ html {
     font-style: normal;
 }
 
-:root, html, body {
-    overflow-x: hidden;  
-    overflow-x: clip;    
+:root,
+html,
+body {
+    overflow-x: hidden;
+    overflow-x: clip;
     overflow-y: hidden;
 }
 
- @media (max-width: 1392px) {
-    :root, html, body {
-        overflow-x: hidden;  
-        overflow-x: clip;    
+@media (max-width: 1392px) {
+    :root,
+    html,
+    body {
+        overflow-x: hidden;
+        overflow-x: clip;
         overflow-y: auto;
     }
 }
 
 @media (max-width: 595px) {
-    :root, html, body {
-        overflow-x: hidden;  
-        overflow-x: clip;    
+    :root,
+    html,
+    body {
+        overflow-x: hidden;
+        overflow-x: clip;
         overflow-y: scroll;
     }
 }

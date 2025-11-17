@@ -4,8 +4,10 @@
 
 <script>
 	import { currentSong } from '$lib/stores/currentSongDataStore.js';
+	import SessionControls from '$lib/components/SessionControls.svelte';
+	import SessionList from '$lib/components/SessionList.svelte';
 
-  /* -------------------------
+	/* -------------------------
   TIME FORMATTING FUNCTION
   ------------------------- */
 
@@ -15,8 +17,7 @@
 		const seconds = Math.floor((duration % 60000) / 1000);
 		return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 	}
-  // ms -> leesbaar formaat omreken formule via ChatGPT
-
+	// ms -> leesbaar formaat omreken formule via ChatGPT
 </script>
 
 <!----------------------------->
@@ -30,38 +31,57 @@
 			<h1 class="now-playing">{$currentSong.title}</h1>
 		{/if}
 
-    {#if $currentSong.artists || $currentSong.album}
-      <div class="sub">
-        {#if $currentSong.artists}{$currentSong.artists}{/if}
-        {#if $currentSong.artists && $currentSong.album} • {/if}
-        {#if $currentSong.album}{$currentSong.album}{/if}
-      </div>
-    {/if}
+		{#if $currentSong.artists || $currentSong.album}
+			<div class="sub">
+				{#if $currentSong.artists}{$currentSong.artists}{/if}
+				{#if $currentSong.artists && $currentSong.album}
+					•
+				{/if}
+				{#if $currentSong.album}{$currentSong.album}{/if}
+			</div>
+		{/if}
+		<section class="player-controls">
+			<button>previous</button>
+			<button>play/pause</button>
+			<button>next</button>
+		</section>
+		<section class="info-section">
+			<p class="info-heading">GENERAL TRACK INFORMATION</p>
 
-    <section class="info-section">
-			<p>GENERAL TRACK INFORMATION</p>
-      <!-- duration -->
-			{#if $currentSong.duration}
-				<p>⏳ Duration: {formatDuration($currentSong.duration)}</p>
-			{/if}
-			<!-- popularity -->
-			{#if $currentSong.popularity}
-        <p
-          class="popularity"
-          data-tip="Popularity is based on total streams and how recent they are. Tracks played more recently rank higher. Higher number = More popular."
-        >🔥 Popularity: {$currentSong.popularity}</p>
-      {/if}
-      {#if $currentSong.artistPopularity}
-        <p
-          class="popularity"
-          data-tip="Artist Popularity is based on the popularity of all the artist's tracks. Higher number = More popular."
-        >🎤 Artist Popularity: {$currentSong.artistPopularity}</p>
-      {/if}
-      {#if $currentSong.status === true}
-        <p>▶️ Currently Playing</p>
-      {:else if $currentSong.status === false}
-        <p>⏸️ Song Paused</p>
-      {/if}
+			<div class="info-row">
+				{#if $currentSong.popularity}
+					<p
+						class="popularity"
+						data-tip="Popularity is based on total streams and how recent they are. Tracks played more recently rank higher. Higher number = More popular."
+					>
+						🔥 Popularity: {$currentSong.popularity}
+					</p>
+				{/if}
+
+				{#if $currentSong.artistPopularity}
+					<p
+						class="popularity"
+						data-tip="Artist Popularity is based on the popularity of all the artist's tracks. Higher number = More popular."
+					>
+						🎤 Artist Popularity: {$currentSong.artistPopularity}
+					</p>
+				{/if}
+			</div>
+
+			<div class="info-row">
+				{#if $currentSong.duration}
+					<p>⏳ Duration: {formatDuration($currentSong.duration)}</p>
+				{/if}
+				{#if $currentSong.status === true}
+					<p>▶️ Currently Playing</p>
+				{:else if $currentSong.status === false}
+					<p>⏸️ Song Paused</p>
+				{/if}
+			</div>
+			<div class="session-container">
+				<SessionControls />
+				<SessionList />
+			</div>
 		</section>
 	{/if}
 </div>
@@ -71,104 +91,151 @@
 <!-- --------------------------->
 
 <style>
-  div {
-    display: flex;
-    flex-direction: column;
-    max-width: 450px;
-  }
+	.player-controls {
+		display: none;
+	}
 
-  h1 {
-    font-weight: 700;
-    font-size: 4em;
-    margin: 0;
-  }
+	div {
+		display: flex;
+		flex-direction: column;
+		max-width: 650px;
+	}
 
-  .sub {
-    color: #9aa5b1;
-    margin-top: 16px;
-    margin-bottom: 16px;
-    font-size: 18px;
-  }
+	h1 {
+		font-weight: 700;
+		font-size: 4em;
+		margin: 0;
+	}
 
-  .info-section {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    width: 100%;
-  }
-  .info-section p:first-child {
-    flex-basis: 100%;
-    font-size: 0.85em;
-    color: #ced2d6;
-    letter-spacing: 0.085em;
-    margin: 0;
-  }
-  .info-section p {
-    font-weight: 600;
-    font-size: .85em;
-    margin: 0;
-    white-space: nowrap;
-  }
+	.sub {
+		color: #9aa5b1;
+		margin-top: 16px;
+		margin-bottom: 16px;
+		font-size: 18px;
+	}
 
-  .popularity {
-    position: relative;
-    cursor: help;
-  }
-  .popularity[data-tip]::after {
-    content: attr(data-tip);
-    position: absolute;
-    left: -150%;
-    top: 100%;
-    background: #111;
-    color: #fff;
-    padding: 8px 12px;
-    font-size: 1em;
-    border-radius: 4px;
-    white-space: normal;                 
-    max-width: 500px;
-    width: max-content;                 
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: .15s;
-    z-index: 2;
-    margin-top: .5em;
-  }
-  .popularity[data-tip]:hover::after {
-    opacity: 1;
-    transform: translateY(0);
-  }
+	.info-section {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+    margin-top:1em;
+	}
 
-  @media (max-width: 1392px) {
-    div {
-      align-items: center;
-    }
-    h1 { 
-      font-size: 3em; 
-      text-align: center;
-    }
-    .sub {
-      text-align: center;
-    }
-    .info-section {
-      flex-direction: column;
-      align-items: center;
-      gap: 1em;
-    }
-    .info-section p:first-child {
-      flex-basis: auto;
-    }
-  }
+	.info-heading {
+		flex-basis: 100%;
+		font-size: 0.85em;
+		color: #ced2d6;
+		letter-spacing: 0.085em;
+		margin: 0;
+	}
 
-  @media (max-width: 595px) {
-    h1 { 
-      font-size: 2em;
-      text-align: center;
-    } 
-    .sub {
-      font-size: 1em;
-      text-align: center;
-    }
-  }
+	.info-section p {
+		font-weight: 600;
+		font-size: 0.85em;
+		margin: 0;
+		white-space: nowrap;
+	}
+
+	/* NEW: row wrapper so a pair stays on one line */
+	.info-row {
+		display: flex;
+		flex-direction: row;
+		gap: 0.75rem;
+	}
+
+	.popularity {
+		position: relative;
+		cursor: help;
+		display: inline-block; /* make area tighter around text */
+	}
+
+	.popularity[data-tip]::after {
+		content: attr(data-tip);
+		position: absolute;
+		left: 50%;
+		top: 100%;
+		background: #111;
+		color: #fff;
+		padding: 8px 12px;
+		font-size: 1em;
+		border-radius: 4px;
+		white-space: normal;
+		max-width: 500px;
+		width: max-content;
+		opacity: 0;
+		transform: translate(-50%, -4px);
+		transition: 0.15s;
+		z-index: 2;
+		margin-top: 0.5em;
+		pointer-events: none;
+	}
+
+	.popularity[data-tip]:hover::after {
+		opacity: 1;
+		transform: translate(-50%, 0);
+	}
+
+	.session-container {
+    margin-top:2em;
+		display: flex;
+		flex-direction: row;
+		gap: 1em;
+	}
+
+	@media (max-width: 1392px) {
+		div {
+			align-items: center;
+		}
+		h1 {
+			font-size: 3em;
+			text-align: center;
+		}
+		.sub {
+			text-align: center;
+		}
+
+		.info-section {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 1em;
+      margin-top:1em;
+		}
+
+		.info-heading {
+			flex-basis: auto;
+			text-align: center;
+		}
+
+		.info-row {
+			justify-content: space-between;
+			flex-wrap: nowrap;
+		}
+	}
+
+	@media (max-width: 595px) {
+		h1 {
+			font-size: 2em;
+			text-align: center;
+		}
+		.sub {
+			font-size: 1em;
+			text-align: center;
+		}
+
+		.info-section {
+			width: 100%;
+		}
+
+		.info-row {
+			justify-content: space-between;
+			gap: 0.5rem;
+		}
+
+		.info-section p {
+			white-space: normal;
+			text-align: center;
+		}
+	}
 </style>

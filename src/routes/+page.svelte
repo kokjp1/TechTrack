@@ -7,8 +7,6 @@ JAVASCRIPT IMPORTS
     import { browser } from '$app/environment';
     import { getStoredAccessToken } from '$lib/spotifyAuth';
     import { currentSong } from '$lib/stores/currentSongDataStore.js';
-    import SessionControls from '$lib/components/SessionControls.svelte';
-  import SessionList from '$lib/components/SessionList.svelte';
 
 /* -------------------------
 SVELTE COMPONENTS IMPORTS
@@ -33,8 +31,6 @@ SVELTE COMPONENTS IMPORTS
 <!-- --------------------------->
 
 {#if signedIn}
-    <SessionControls />
-  <SessionList />
     {#if $currentSong}
         <main>
             <TrackInfo />
@@ -42,6 +38,10 @@ SVELTE COMPONENTS IMPORTS
                 <AlbumCover />
                 <Visualization />
             </section>
+            <!-- <details>
+                <summary>How does it</summary>
+                <pre>hello</pre>
+            </details> -->
         </main>
     {:else}
         <EmptyState />

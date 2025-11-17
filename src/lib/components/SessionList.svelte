@@ -17,9 +17,9 @@ RECORDING/NOT RECORDING LABELS STATE CHECKING
     let statusLabel;
     $: {
       if ($sessionStore.recording) {
-        statusLabel = 'Recording';
+        statusLabel = '🔴 Recording';
       } else {
-        statusLabel = 'Not Recording';
+        statusLabel = '⚫ Not Recording';
       }
     }
 </script>
@@ -175,15 +175,15 @@ RECORDING/NOT RECORDING LABELS STATE CHECKING
     }
 
     .sidebar-toggle {
-        position: fixed;
-        left: 0.75rem;
-        bottom: 0.75rem;
+        /* position: fixed; */
+        margin-left:auto;
         z-index: 1001;
         background: #1db954;
-        color: #000;
-        border: none;
-        border-radius: 999px;
-        padding: 0.6rem 0.9rem;
+        color: #fff;
+        border: 1px solid #444;
+        border-radius: 6px;
+        padding: .4rem .7rem;
+        cursor: pointer;
         font-weight: 600;
         cursor: pointer;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);

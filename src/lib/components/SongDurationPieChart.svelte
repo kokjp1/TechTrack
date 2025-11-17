@@ -140,13 +140,15 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 						if (sortMode === 'artistAmount') {
 							const aArtists = Array.isArray(aSong?.artists) ? aSong.artists : [aSong?.artists ?? 'Unknown'];
 							const bArtists = Array.isArray(bSong?.artists) ? bSong.artists : [bSong?.artists ?? 'Unknown'];
+							// haal de opgetelde artiesten array op & chec of het een array is
 
-							// neem simpelweg de eerste artiest als "hoofd"-artiest
 							const aArtistName = aArtists[0]?.name ?? aArtists[0] ?? 'Unknown';
 							const bArtistName = bArtists[0]?.name ?? bArtists[0] ?? 'Unknown';
+							// pak de eerste artiest (als er meerdere zijn) om te gebruiken voor de A & B vergelijking
 
 							const aCount = artistAmount.get(aArtistName) || 0;
 							const bCount = artistAmount.get(bArtistName) || 0;
+							// A & B waarden invullen om javacsript te laten vergelijken
 
 							// eerst sorteren op frequentie (hoog -> laag)
 							if (bCount !== aCount) return bCount - aCount;
