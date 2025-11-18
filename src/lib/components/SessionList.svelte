@@ -185,6 +185,7 @@ RECORDING/NOT RECORDING LABELS STATE CHECKING
         font-weight: 600;
         cursor: pointer;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
     }
     .sidebar-toggle:hover {
         filter: brightness(1.25);
@@ -192,5 +193,11 @@ RECORDING/NOT RECORDING LABELS STATE CHECKING
     }
     @media (max-width: 480px) {
         :root { --sidebar-width: 90vw; }
+    }
+
+    @media (max-width: 1392px) {
+        .sidebar-toggle {
+            width:100%;
+        }
     }
 </style>

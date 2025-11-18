@@ -1,6 +1,5 @@
 <script>
 	import { sessionStore, startSession, stopSession } from '$lib/stores/sessionStore.js';
-	import SessionList from '$lib/components/SessionList.svelte';
 </script>
 
 <div class="session-controls">
@@ -23,7 +22,6 @@
 		</span>
 		<!-- https://codepen.io/vram1980/pen/oNvWdO -->
 	{/if}
-	<SessionList />
 </div>
 
 <style>

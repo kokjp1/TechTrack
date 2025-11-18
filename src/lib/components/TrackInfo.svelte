@@ -78,13 +78,12 @@
 					<p>⏸️ Song Paused</p>
 				{/if}
 			</div>
-			<div class="session-container">
-				<SessionControls />
-				<!-- <SessionList /> -->
-			</div>
+
+			<SessionControls />
+			<SessionList />
 		</section>
 	{/if}
-  <details>
+	<details>
 		<summary><span></span> Session System Tutorial</summary>
 		<p>
 			Use the "Record" button to start a listening session. While recording, all songs you play will
@@ -99,69 +98,67 @@
 <!-- --------------------------->
 
 <style>
-
-  	:root {
+	:root {
 		interpolate-size: allow-keywords;
 	}
 	details {
 		overflow: hidden;
-		background-color: rgba(42,42,42, 0.5);
-		padding: .5em;
+		background-color: rgba(42, 42, 42, 0.5);
+		padding: 0.5em;
 		border-radius: 6px;
-    	margin-top:1em;
+		margin-top: 1em;
 		border: 1px solid #444;
 	}
-  
-  details * {
-    margin:0;
-    padding:.5em;
-  }
 
-  details > p {
-      padding-block:1rem;
-  }
+	details * {
+		margin: 0;
+		padding: 0.5em;
+	}
 
-  details summary {
-      list-style-type: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.5em;
-  }
+	details > p {
+		padding-block: 1rem;
+	}
 
-  details summary span {
-      position: relative;
-      width: .025em;
-      height: .025em;
-      display: inline-block;
-  }
+	details summary {
+		list-style-type: none;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+	}
 
-  details summary span::before,
-  details summary span::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100%;
-      height: 2px;
-      background: #1DB954;             
-      transform-origin: center;
-      transition: transform 150ms ease;
-  }
+	details summary span {
+		position: relative;
+		width: 0.025em;
+		height: 0.025em;
+		display: inline-block;
+	}
 
-  details summary span::before {
-      transform: translate(-50%, -50%);
-  }
+	details summary span::before,
+	details summary span::after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 100%;
+		height: 2px;
+		background: #1db954;
+		transform-origin: center;
+		transition: transform 150ms ease;
+	}
 
-  details summary span::after {
-      transform: translate(-50%, -50%) rotate(90deg);
-  }
+	details summary span::before {
+		transform: translate(-50%, -50%);
+	}
 
-  details[open] summary span::after {
-      transform: translate(-50%, -50%) rotate(0deg);
-	  	        background: red;             
+	details summary span::after {
+		transform: translate(-50%, -50%) rotate(90deg);
+	}
 
-  }
+	details[open] summary span::after {
+		transform: translate(-50%, -50%) rotate(0deg);
+		background: red;
+	}
 
 	details::details-content {
 		block-size: 0;
@@ -181,7 +178,7 @@
 	div {
 		display: flex;
 		flex-direction: column;
-		max-width: 650px;
+		max-width: 600px;
 	}
 
 	h1 {
@@ -203,7 +200,7 @@
 		align-items: center;
 		flex-wrap: wrap;
 		gap: 0.75rem;
-    margin-top:1em;
+		margin-top: 1em;
 	}
 
 	.info-heading {
@@ -225,12 +222,13 @@
 		display: flex;
 		flex-direction: row;
 		gap: 0.75rem;
+		margin-bottom: 1em;
 	}
 
 	.popularity {
 		position: relative;
 		cursor: help;
-		display: inline-block; 
+		display: inline-block;
 	}
 
 	.popularity[data-tip]::after {
@@ -260,16 +258,16 @@
 	}
 
 	.session-container {
-    margin-top:2em;
+		margin-top: 2em;
 		display: flex;
 		flex-direction: row;
 		gap: 1em;
 	}
 
 	@media (max-width: 1392px) {
-    div{
-      max-width:337px;
-    }
+		div {
+			max-width: 337px;
+		}
 		h1 {
 			font-size: 3em;
 			text-align: center;
@@ -282,7 +280,7 @@
 			flex-direction: column;
 			align-items: stretch;
 			gap: 1em;
-      margin-top:1em;
+			margin-top: 1em;
 		}
 
 		.info-heading {
@@ -295,13 +293,13 @@
 			flex-wrap: nowrap;
 		}
 
-    details {
-    max-width:100%;
-    }
+		details {
+			max-width: 100%;
+		}
 	}
 
 	@media (max-width: 595px) {
-		div{
+		div {
 			max-width: 283px;
 		}
 		h1 {
@@ -326,8 +324,8 @@
 			white-space: normal;
 			text-align: center;
 		}
-    details {
-      max-width:100%;
-    }
+		details {
+			max-width: 100%;
+		}
 	}
 </style>
