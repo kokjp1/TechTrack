@@ -2,6 +2,7 @@
 	import * as d3 from 'd3';
 	import { sessionStore } from '$lib/stores/sessionStore.js';
 	import 'd3-transition';
+	import { formatDuration } from '$lib/utils/formatDuration.js';
 
 	let container;
 	let sessionChart;
@@ -10,12 +11,6 @@
 	// TOOLTIP STATE (simpel: alleen tekst)
 	let tooltip;
 	let activeSlice = null;
-
-	function formatDuration(duration) {
-		const minutes = Math.floor(duration / 60000);
-		const seconds = Math.floor((duration % 60000) / 1000);
-		return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-	}
 
 /* ------------------------------------------------
 DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
@@ -36,7 +31,8 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 						artists: song.artists,
 						album: song.album,
 						genre: song.genre || 'Unknown',
-						durationMs: song.durationMs || song.duration || 0
+						durationMs: song.durationMs || song.duration || 0,
+						image: song.image // <--- Pass image through
 					}))
 				}
 			]
@@ -108,7 +104,6 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		// https://d3js.org/d3-scale-chromatic/categorical
 
 		const songs = data.children[0]?.children ?? [];
-
 		// telling functie aanroepen en maken van artiest voorkomendheid en genre voorkomendheid
 		const artistAmount = buildArtistFrequency(songs);
 		const genreAmount = buildGenreFrequency(songs);
@@ -185,17 +180,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 			.join('g')
 			.attr('transform', (d) => `translate(${d.x0},${d.y0})`);
 
-		const format = d3.format(',d');
-		leaf.append('title').text(
-			(d) =>
-				`${d.data.name} (${d.data.genre || 'Unknown genre'})\n` +
-				`${d
-					.ancestors()
-					.reverse()
-					.map((d) => d.data.name)
-					.join('.')} ` +
-				`\n${format(d.value)}`
-		);
+		// Default tooltip verwijderd (geen leaf.append('title'))
 
 		const rects = leaf
 			.selectAll('rect')
@@ -267,7 +252,8 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 					artist: d.data.artists,
 					title: d.data.name,
 					genre: d.data.genre || 'Unknown',
-					duration: formatDuration(d.data.durationMs || 0)
+					duration: formatDuration(d.data.durationMs || 0),
+					image: d.data.image // <--- Add image to tooltip data
 				};
 				d3.select(tooltip).transition().duration(175).style('opacity', 1);
 			})
@@ -332,7 +318,15 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 
 <div id="tooltip" bind:this={tooltip}>
 	{#if activeSlice}
-		<span>{activeSlice.artist} - {activeSlice.title} | {activeSlice.genre} | {activeSlice.duration}</span>
+		<div class="tooltip-content">
+			{#if activeSlice.image}
+				<img src={activeSlice.image} alt="Album Art" class="tooltip-image" />
+			{/if}
+			<div class="tooltip-text">
+				<span>{activeSlice.artist} - {activeSlice.title}</span>
+				<span class="tooltip-sub">{activeSlice.genre} | {activeSlice.duration}</span>
+			</div>
+		</div>
 	{/if}
 </div>
 
@@ -389,10 +383,35 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		position: absolute;
 		opacity: 0;
 		pointer-events: none;
-		background: rgba(0, 0, 0, 0.85);
+		background: rgba(0, 0, 0, 0.9);
 		color: white;
-		padding: 0.25rem 0.5rem;
-		border-radius: 0.25rem;
+		padding: 0.5rem;
+		border-radius: 0.5rem;
 		font-size: 0.8rem;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+		z-index: 10;
+	}
+
+	.tooltip-content {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.tooltip-image {
+		width: 48px;
+		height: 48px;
+		border-radius: 4px;
+		object-fit: cover;
+	}
+
+	.tooltip-text {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.tooltip-sub {
+		font-size: 0.75em;
+		opacity: 0.8;
 	}
 </style>

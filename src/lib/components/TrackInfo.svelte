@@ -6,18 +6,8 @@
 	import { currentSong } from '$lib/stores/currentSongDataStore.js';
 	import SessionControls from '$lib/components/SessionControls.svelte';
 	import SessionList from '$lib/components/SessionList.svelte';
+	import { formatDuration } from '$lib/utils/formatDuration.js';
 
-	/* -------------------------
-  TIME FORMATTING FUNCTION
-  ------------------------- */
-
-	// omreken formule voor duratie in ms naar mm:ss
-	function formatDuration(duration) {
-		const minutes = Math.floor(duration / 60000);
-		const seconds = Math.floor((duration % 60000) / 1000);
-		return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-	}
-	// ms -> leesbaar formaat omreken formule via ChatGPT
 </script>
 
 <!----------------------------->
@@ -222,6 +212,9 @@
 		display: flex;
 		flex-direction: row;
 		gap: 0.75rem;
+	}
+
+	.info-row:nth-of-type(2) {
 		margin-bottom: 1em;
 	}
 
