@@ -176,7 +176,6 @@ RECORDING/NOT RECORDING LABELS STATE CHECKING
 
     .sidebar-toggle {
         margin-left:auto;
-        /* z-index: 1001; */
         background: #1db954;
         color: #fff;
         border: 1px solid #444;

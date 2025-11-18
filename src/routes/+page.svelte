@@ -38,10 +38,6 @@ SVELTE COMPONENTS IMPORTS
                 <AlbumCover />
                 <Visualization />
             </section>
-            <!-- <details>
-                <summary>How does it</summary>
-                <pre>hello</pre>
-            </details> -->
         </main>
     {:else}
         <EmptyState />

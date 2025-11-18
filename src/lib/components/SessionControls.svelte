@@ -18,7 +18,7 @@
 				<span class="ring-container"
 					><span class="ringring"></span><span class="circle"></span></span
 				>
-				Recording…
+				Recording...
 			</span>
 		</span>
 		<!-- https://codepen.io/vram1980/pen/oNvWdO -->
