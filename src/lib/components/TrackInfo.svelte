@@ -85,7 +85,7 @@
 		</section>
 	{/if}
   <details>
-		<summary>ℹ️ Session System Tutorial</summary>
+		<summary><span></span> Session System Tutorial</summary>
 		<p>
 			Use the "Record" button to start a listening session. While recording, all songs you play will
 			be logged in your session history. Click "Stop" to end the session. You can view your
@@ -105,10 +105,11 @@
 	}
 	details {
 		overflow: hidden;
-		background-color: #2a2a2a;
+		background-color: rgba(42,42,42, 0.5);
 		padding: .5em;
 		border-radius: 6px;
-    margin-top:1em;
+    	margin-top:1em;
+		border: 1px solid #444;
 	}
   
   details * {
@@ -121,7 +122,45 @@
   }
 
   details summary {
-      cursor:pointer;
+      list-style-type: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+  }
+
+  details summary span {
+      position: relative;
+      width: .025em;
+      height: .025em;
+      display: inline-block;
+  }
+
+  details summary span::before,
+  details summary span::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: #1DB954;             
+      transform-origin: center;
+      transition: transform 150ms ease;
+  }
+
+  details summary span::before {
+      transform: translate(-50%, -50%);
+  }
+
+  details summary span::after {
+      transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  details[open] summary span::after {
+      transform: translate(-50%, -50%) rotate(0deg);
+	  	        background: red;             
+
   }
 
 	details::details-content {
@@ -197,7 +236,7 @@
 	.popularity[data-tip]::after {
 		content: attr(data-tip);
 		position: absolute;
-		left: 50%;
+		left: 100%;
 		top: 100%;
 		background: #111;
 		color: #fff;
@@ -229,7 +268,7 @@
 
 	@media (max-width: 1392px) {
     div{
-      min-width:345px;
+      max-width:337px;
     }
 		h1 {
 			font-size: 3em;
@@ -257,11 +296,14 @@
 		}
 
     details {
-    max-width:325px;
+    max-width:100%;
     }
 	}
 
 	@media (max-width: 595px) {
+		div{
+			max-width: 283px;
+		}
 		h1 {
 			font-size: 2em;
 			text-align: center;
@@ -285,7 +327,7 @@
 			text-align: center;
 		}
     details {
-      max-width:325px;
+      max-width:100%;
     }
 	}
 </style>
