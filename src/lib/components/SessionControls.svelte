@@ -12,72 +12,53 @@
 		<button class="stop" on:click={stopSession}>Stop</button>
 	{/if}
 	{#if $sessionStore.recording === true}
-		<span class="status">
-			<span class="status-label">
-				<span class="ring-container"
-					><span class="ringring"></span><span class="circle"></span></span
-				>
-				Recording...
-			</span>
-		</span>
-		<!-- https://codepen.io/vram1980/pen/oNvWdO -->
+		<div class="recording-status">
+			<span></span>
+			<p>Recording</p>
+		</div>
 	{/if}
 </div>
 
 <style>
-	.ring-container {
+	/* Special shoutout David hij heeft de animatie voor me gemaakt */
+	/* https://codepen.io/Dave-deo/pen/GgZvZZX */
+	.recording-status {
+		display: flex;
+		align-items: center;
+		margin-left: 0.25em;
+		gap: 0.75em;
+	}
+
+	span {
 		position: relative;
-		width: 25px;
-		height: 25px;
-	}
-
-	.circle {
-		width: 15px;
-		height: 15px;
-		background-color: #bd1919;
+		display: block;
+		height: 12px;
+		aspect-ratio: 1;
+		background: red;
 		border-radius: 50%;
-		position: absolute;
-
 	}
 
-	.ringring {
-		border: 3px solid #bd1919;
-		border-radius: 30px;
-		height: 25px;
-		width: 25px;
+	span::before {
 		position: absolute;
-		left: -50%;
-		top: -50%;
-		transform: translate(50%, 50%);
-		animation: pulsate 1s ease-out infinite;
-		-webkit-animation: pulsate 1s ease-out infinite;
-		opacity: 0;
+		content: '';
+		top: 50%;
+		left: 50%;
+		translate: -50% -50%;
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		border: solid 3px rgb(255, 0, 0);
+		animation: pulse ease 1s infinite;
 	}
-	@keyframes pulsate {
+
+	@keyframes pulse {
 		0% {
-			transform: scale(0.1, 0.1);
-			opacity: 0;
-		}
-		50% {
 			opacity: 1;
+			scale: 0;
 		}
 		100% {
-			transform: scale(1.2, 1.2);
 			opacity: 0;
-		}
-	}
-
-	@-webkit-keyframes pulsate {
-		0% {
-			-webkit-transform: scale(0.1, 0.1);
-			opacity: 0;
-		}
-		50% {
-			opacity: 1;
-		}
-		100% {
-			-webkit-transform: scale(1.2, 1.2);
-			opacity: 0;
+			scale: 1.5;
 		}
 	}
 
@@ -87,17 +68,6 @@
 		gap: 0.5rem;
 		flex-wrap: wrap;
 	}
-
-	.status {
-		opacity: 0.8;
-	}
-
-	.status-label {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.25rem; /* ruimte tussen dot en tekst */
-	}
-
 	button {
 		background: #2a2a2a;
 		color: #fff;
