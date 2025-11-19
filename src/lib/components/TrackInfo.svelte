@@ -211,9 +211,6 @@
 		display: flex;
 		flex-direction: row;
 		gap: 0.75rem;
-	}
-
-	.info-row:nth-of-type(2) {
 		margin-bottom: 1em;
 	}
 
@@ -276,8 +273,11 @@
 		.info-row {
 			justify-content: space-between;
 			flex-wrap: nowrap;
+			margin:0;
 		}
-
+		.info-row:nth-of-type(2) {
+			margin-bottom: 1em;
+		}
 		details {
 			max-width: 100%;
 		}
