@@ -3,6 +3,9 @@
 	import { sessionStore } from '$lib/stores/sessionStore.js';
 	import 'd3-transition';
 	import { formatDuration } from '$lib/utils/formatDuration.js';
+	import sortByDurationIcon from '$lib/assets/qlementine-icons--sort-time-asc-16.svg';
+	import sortByArtistIcon from '$lib/assets/qlementine-icons--sort-user-asc-16.svg';
+	import sortByGenreIcon from '$lib/assets/qlementine-icons--sort-alpha-asc-16.svg';
 
 	let container;
 	let sessionChart;
@@ -214,7 +217,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 							enter
 								.transition()
 								.duration(500)
-								.delay((d) => d.index * 25)
+								.delay((d) => d.index * 150)
 								.attr('width', (d) => d.x1 - d.x0)
 								.attr('height', (d) => d.y1 - d.y0)
 						),
@@ -335,28 +338,28 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		class="sort-tab {sortMode === 'none' ? 'active' : ''}"
 		on:click={() => setSortMode('none')}
 	>
-		Standaard
+		Standaard 
 	</button>
 	<button
 		type="button"
 		class="sort-tab {sortMode === 'duration' ? 'active' : ''}"
 		on:click={() => setSortMode('duration')}
 	>
-		Duur (lang → kort)
+		Duur <img src={sortByDurationIcon} alt="Sort by time" />
 	</button>
 	<button
 		type="button"
 		class="sort-tab {sortMode === 'artistAmount' ? 'active' : ''}"
 		on:click={() => setSortMode('artistAmount')}
 	>
-		Artiest (meest → minst)
+		Artiest <img src={sortByArtistIcon} alt="Sort by artist" />
 	</button>
 	<button
 		type="button"
 		class="sort-tab {sortMode === 'genreAmount' ? 'active' : ''}"
 		on:click={() => setSortMode('genreAmount')}
 	>
-		Genre (meest → minst)
+		Genre <img src={sortByGenreIcon} alt="Sort by genre" />
 	</button>
 </div>
 
@@ -409,7 +412,13 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		margin-bottom: 1rem;
 	}
 
+	.sort-tab.active img {
+		filter: invert(1);
+	}
+
 	.sort-tab {
+		display:flex;
+		gap: .5em;
 		border: none;
 		background: transparent;
 		color: #e5e5e5;
@@ -433,9 +442,8 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		background: #1db954;
 		color: #000;
 		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
-		font-weight: 600;
+		font-weight:700;
 	}
-
 	.sort-tab:active {
 		transform: translateY(1px);
 	}

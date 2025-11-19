@@ -37,8 +37,7 @@
 		background-color: #bd1919;
 		border-radius: 50%;
 		position: absolute;
-		top: 5px;
-		left: 5px;
+
 	}
 
 	.ringring {
@@ -47,8 +46,9 @@
 		height: 25px;
 		width: 25px;
 		position: absolute;
-		left: -2.5px;
-		top: -2px;
+		left: -50%;
+		top: -50%;
+		transform: translate(50%, 50%);
 		animation: pulsate 1s ease-out infinite;
 		-webkit-animation: pulsate 1s ease-out infinite;
 		opacity: 0;

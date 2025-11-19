@@ -54,7 +54,7 @@ export const currentSong = readable(null, (set) => {
 						durationMs: track.duration_ms,
 						image: track.album.images[0].url,
 						capturedAt: Date.now(),
-						genre: trackGenre // <--- NIEUW veld
+						genre: trackGenre 
 					};
 
 					let updatedSongs = session.sessionPlayedSongs.slice();
