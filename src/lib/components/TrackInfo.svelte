@@ -7,7 +7,6 @@
 	import SessionControls from '$lib/components/SessionControls.svelte';
 	import SessionList from '$lib/components/SessionList.svelte';
 	import { formatDuration } from '$lib/utils/formatDuration.js';
-
 </script>
 
 <!----------------------------->
@@ -248,13 +247,6 @@
 	.popularity[data-tip]:hover::after {
 		opacity: 1;
 		transform: translate(-50%, 0);
-	}
-
-	.session-container {
-		margin-top: 2em;
-		display: flex;
-		flex-direction: row;
-		gap: 1em;
 	}
 
 	@media (max-width: 1392px) {

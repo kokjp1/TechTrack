@@ -25,7 +25,6 @@
 </div>
 
 <style>
-
 	.ring-container {
 		position: relative;
 		width: 25px;
@@ -86,7 +85,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		flex-wrap: wrap; 
+		flex-wrap: wrap;
 	}
 
 	.status {

@@ -3,11 +3,10 @@
 </script>
 
 <main>
-    <h1>🧬 Het DNA van je sessie. 🧬</h1>
-    <button class="back-button" on:click={() => history.back()} aria-label="Terug">← Terug</button>
+	<h1>🧬 Het DNA van je sessie. 🧬</h1>
+	<button class="back-button" on:click={() => history.back()} aria-label="Terug">← Terug</button>
 
 	<Treemap />
-
 </main>
 
 <style>
@@ -23,7 +22,7 @@
 		top: 8px;
 		left: 8px;
 		z-index: 10;
-		background: rgba(0,0,0,0.6);
+		background: rgba(0, 0, 0, 0.6);
 		color: #fff;
 		border: none;
 		padding: 6px 10px;

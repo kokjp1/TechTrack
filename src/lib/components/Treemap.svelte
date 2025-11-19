@@ -13,20 +13,19 @@
 	let activeSlice = null;
 
 	const customPalette = [
-            '#1DB954', // Spotify Green
-			'#7C4DFF', // Deep Purple
-			'#E040FB', // Purple
-            '#FF4081', // Pink
-            '#00E5FF', // Cyan
-            '#FFD740', // Amber
-            '#69F0AE', // Green Accent
-            '#FF5252', // Red Accent
-            '#536DFE', // Indigo
-            '#FFAB40'  // Orange
-			
-        ];
+		'#1DB954',
+		'#7C4DFF',
+		'#E040FB',
+		'#FF4081',
+		'#00E5FF',
+		'#FFD740',
+		'#69F0AE',
+		'#FF5252',
+		'#536DFE',
+		'#FFAB40'
+	];
 
-/* ------------------------------------------------
+	/* ------------------------------------------------
 DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 ------------------------------------------------- */
 
@@ -46,7 +45,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 						album: song.album,
 						genre: song.genre || 'Unknown',
 						durationMs: song.durationMs || song.duration || 0,
-						image: song.image 
+						image: song.image
 					}))
 				}
 			]
@@ -60,7 +59,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 			const artists = Array.isArray(song.artists) ? song.artists : [song.artists ?? 'Unknown'];
 			for (const artist of artists) {
 				if (!artist) continue;
-				const key = artist.name ?? artist; 
+				const key = artist.name ?? artist;
 				artistAmount.set(key, (artistAmount.get(key) || 0) + 1);
 			}
 		}
@@ -81,16 +80,16 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
     D3 TREEMAP CODE | https://observablehq.com/@d3/treemap/2
     ------------------------------------------------------ */
 
-    // standaard: NIET sorteren
-    let sortMode = 'none'; 
-    // 'none' | 'duration' | 'artistAmount' | 'genreAmount'
+	// standaard: NIET sorteren
+	let sortMode = 'none';
+	// 'none' | 'duration' | 'artistAmount' | 'genreAmount'
 
-    function setSortMode(mode) {
-        if (sortMode === mode) return; // geen dubbele render
-        sortMode = mode;
-        const data = buildTreemapData($sessionStore);
-        renderTreemap(data);
-    }
+	function setSortMode(mode) {
+		if (sortMode === mode) return; // geen dubbele render
+		sortMode = mode;
+		const data = buildTreemapData($sessionStore);
+		renderTreemap(data);
+	}
 
 	function renderTreemap(data, tile = d3.treemapDice) {
 		// dice = horizontaal, slice = verticaal
@@ -110,7 +109,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		});
 
 		// kleur-schaal op basis van genres (blijft nodig voor de treemap zelf)
-        const color = d3.scaleOrdinal(allGenres, customPalette);
+		const color = d3.scaleOrdinal(allGenres, customPalette);
 		// https://d3js.org/d3-scale-chromatic/categorical
 
 		const songs = data.children[0]?.children ?? [];
@@ -118,74 +117,73 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		const artistAmount = buildArtistFrequency(songs);
 		const genreAmount = buildGenreFrequency(songs);
 
-		const root = d3
-			.treemap()
-			.tile(tile)
-			.size([width, height])
-			.padding(1)
-			.round(true)(
-				d3
-					.hierarchy(data)
-					.sum((d) => d.value) // Aangepast: gebruik d.value (duur) in plaats van 1
-					.sort((a, b) => {
-						// voor zover ik weet werkt de javascript/d3 sort functie zo dat je twee elementen tegen elkaar gaat afwegen, en om dat te doen moet je wel twee objecten hebben (a & b). vervolgens handelt d3/javascript het loopen door de hele lijst zelf af.
-						const aSong = a.data;
-						const bSong = b.data;
+		const root = d3.treemap().tile(tile).size([width, height]).padding(1).round(true)(
+			d3
+				.hierarchy(data)
+				.sum((d) => d.value) // Aangepast: gebruik d.value (duur) in plaats van 1
+				.sort((a, b) => {
+					// voor zover ik weet werkt de javascript/d3 sort functie zo dat je twee elementen tegen elkaar gaat afwegen, en om dat te doen moet je wel twee objecten hebben (a & b). vervolgens handelt d3/javascript het loopen door de hele lijst zelf af.
+					const aSong = a.data;
+					const bSong = b.data;
 
-						if (sortMode === 'none') {
-							return 0; // originele volgorde
-						}
+					if (sortMode === 'none') {
+						return 0; // originele volgorde
+					}
 
-						if (sortMode === 'duration') {
-							const aDur = aSong?.durationMs ?? 0;
-							const bDur = bSong?.durationMs ?? 0;
-							return bDur - aDur; // lang -> kort
-						}
+					if (sortMode === 'duration') {
+						const aDur = aSong?.durationMs ?? 0;
+						const bDur = bSong?.durationMs ?? 0;
+						return bDur - aDur; // lang -> kort
+					}
 
-						if (sortMode === 'artistAmount') {
-							const aArtists = Array.isArray(aSong?.artists) ? aSong.artists : [aSong?.artists ?? 'Unknown'];
-							const bArtists = Array.isArray(bSong?.artists) ? bSong.artists : [bSong?.artists ?? 'Unknown'];
-							// haal de opgetelde artiesten array op & chec of het een array is
+					if (sortMode === 'artistAmount') {
+						const aArtists = Array.isArray(aSong?.artists)
+							? aSong.artists
+							: [aSong?.artists ?? 'Unknown'];
+						const bArtists = Array.isArray(bSong?.artists)
+							? bSong.artists
+							: [bSong?.artists ?? 'Unknown'];
+						// haal de opgetelde artiesten array op & chec of het een array is
 
-							const aArtistName = aArtists[0]?.name ?? aArtists[0] ?? 'Unknown';
-							const bArtistName = bArtists[0]?.name ?? bArtists[0] ?? 'Unknown';
-							// pak de eerste artiest (als er meerdere zijn) om te gebruiken voor de A & B vergelijking
+						const aArtistName = aArtists[0]?.name ?? aArtists[0] ?? 'Unknown';
+						const bArtistName = bArtists[0]?.name ?? bArtists[0] ?? 'Unknown';
+						// pak de eerste artiest (als er meerdere zijn) om te gebruiken voor de A & B vergelijking
 
-							const aCount = artistAmount.get(aArtistName) || 0;
-							const bCount = artistAmount.get(bArtistName) || 0;
-							// A & B waarden invullen om javacsript te laten vergelijken
+						const aCount = artistAmount.get(aArtistName) || 0;
+						const bCount = artistAmount.get(bArtistName) || 0;
+						// A & B waarden invullen om javacsript te laten vergelijken
 
-							// eerst sorteren op frequentie (hoog -> laag)
-							if (bCount !== aCount) return bCount - aCount;
+						// eerst sorteren op frequentie (hoog -> laag)
+						if (bCount !== aCount) return bCount - aCount;
 
-							// dan alfabetisch als tie-breaker (optioneel)
-							return d3.ascending(aArtistName, bArtistName);
-						}
+						// dan alfabetisch als tie-breaker (optioneel)
+						return d3.ascending(aArtistName, bArtistName);
+					}
 
-						if (sortMode === 'genreAmount') {
-							const aGenre = aSong?.genre || 'Unknown';
-							const bGenre = bSong?.genre || 'Unknown';
+					if (sortMode === 'genreAmount') {
+						const aGenre = aSong?.genre || 'Unknown';
+						const bGenre = bSong?.genre || 'Unknown';
 
-							const aCount = genreAmount.get(aGenre) || 0;
-							const bCount = genreAmount.get(bGenre) || 0;
+						const aCount = genreAmount.get(aGenre) || 0;
+						const bCount = genreAmount.get(bGenre) || 0;
 
-							if (bCount !== aCount) return bCount - aCount;
-							return d3.ascending(aGenre, bGenre);
-						}
+						if (bCount !== aCount) return bCount - aCount;
+						return d3.ascending(aGenre, bGenre);
+					}
 
-						return 0;
-					})
-			); // ChatGPT heeft me geholpen met de sorteerfunctie
+					return 0;
+				})
+		); // ChatGPT heeft me geholpen met de sorteerfunctie
 
-        // Assign index for staggered animation
-        root.leaves().forEach((d, i) => (d.index = i));
+		// Assign index for staggered animation
+		root.leaves().forEach((d, i) => (d.index = i));
 
-        const svg = d3
-            .create('svg')
-            .attr('viewBox', [0, 0, width, height])
-            .attr('width', width)
-            .attr('height', height)
-            .attr('style', 'max-width: 100%; height: auto;');
+		const svg = d3
+			.create('svg')
+			.attr('viewBox', [0, 0, width, height])
+			.attr('width', width)
+			.attr('height', height)
+			.attr('style', 'max-width: 100%; height: auto;');
 
 		const leaf = svg
 			.selectAll('g')
@@ -195,40 +193,46 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 
 		const rects = leaf
 			.selectAll('rect')
-			.data(d => [d])
+			.data((d) => [d])
 			.join(
-				enter => enter
-					.append('rect')
-					.attr('id', (d) => {
-						const uid = `leaf-${Math.random().toString(36).slice(2)}`;
-						d.leafUid = { id: uid, href: `#${uid}` };
-						return d.leafUid.id;
-					})
-					.attr('fill', (d) => {
-						const genre = d.data.genre || 'Unknown';
-						return color(genre);
-					})
-					.attr('fill-opacity', 0.7)
-					.attr('width', 0)
-					.attr('height', 0)
-					.call(enter =>
-						enter.transition().duration(500)
+				(enter) =>
+					enter
+						.append('rect')
+						.attr('id', (d) => {
+							const uid = `leaf-${Math.random().toString(36).slice(2)}`;
+							d.leafUid = { id: uid, href: `#${uid}` };
+							return d.leafUid.id;
+						})
+						.attr('fill', (d) => {
+							const genre = d.data.genre || 'Unknown';
+							return color(genre);
+						})
+						.attr('fill-opacity', 0.7)
+						.attr('width', 0)
+						.attr('height', 0)
+						.call((enter) =>
+							enter
+								.transition()
+								.duration(500)
+								.delay((d) => d.index * 25)
+								.attr('width', (d) => d.x1 - d.x0)
+								.attr('height', (d) => d.y1 - d.y0)
+						),
+				(update) =>
+					update.call((update) =>
+						update
+							.transition()
+							.duration(500)
 							.delay((d) => d.index * 25)
 							.attr('width', (d) => d.x1 - d.x0)
 							.attr('height', (d) => d.y1 - d.y0)
 					),
-				update => update
-					.call(update =>
-						update.transition().duration(500)
-							.delay((d) => d.index * 25)
-							.attr('width', (d) => d.x1 - d.x0)
-							.attr('height', (d) => d.y1 - d.y0)
-					),
-				exit => exit
-					.call(exit =>
+				(exit) =>
+					exit.call((exit) =>
 						exit.transition().duration(300).attr('width', 0).attr('height', 0).remove()
 					)
 			);
+		// https://github.com/cmda-tt/course-25-26/blob/main/week-3/slides/tt_wk3_d3-joins_les-10_do.pdf
 
 		leaf
 			.append('clipPath')
@@ -241,21 +245,31 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 			.attr('xlink:href', (d) => d.leafUid.href);
 
 		leaf
-			.append('text')
-			.attr('clip-path', (d) => `url(#${d.clipUid})`)
-			.selectAll('tspan')
-			.data((d) => {
-				const parts = d.data.name.split(/(?=[A-Z][a-z])|\s+/g);
-				const label = `${d.data.genre || 'Unknown'}`;
-				return parts.concat(label);
-			})
-			.join('tspan')
-			.attr('x', 3)
-			.attr('y', (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.1 + i * 0.9}em`)
-			.attr('fill-opacity', (d, i, nodes) => (i === nodes.length - 1 ? 0.7 : null))
-			.text((d) => d);
+			.append('foreignObject')
+			.style('pointer-events', 'none')
+			.attr('x', 4)
+			.attr('y', 4)
+			.attr('width', (d) => Math.max(0, d.x1 - d.x0 - 8)) // padding
+			.attr('height', (d) => Math.max(0, d.y1 - d.y0 - 8))
+			.append('xhtml:div')
+			.style('width', '100%')
+			.style('height', '100%')
+			.style('overflow', 'hidden')
+			.style('font-size', '12px')
+			.style('color', 'black')
+			.style('text-overflow', 'ellipsis')
+			.html(
+				(d) => `
+                <div style="font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${d.data.name}
+                </div>
+                <div style="font-size:0.8em; opacity:0.8;">
+                    ${d.data.genre || 'Unknown'}
+                </div>
+            `
+			);
 
-	/* -----------------------------------------------------------------
+		/* -----------------------------------------------------------------
     TOOLTIP CODE | https://codepen.io/dandevri/pen/azdrEQb?editors=1010
     ----------------------------------------------------------------- */
 		rects
@@ -316,37 +330,37 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 <!-- ------------------------------------->
 
 <div class="sort-tabs">
-    <button
-        type="button"
-        class="sort-tab {sortMode === 'none' ? 'active' : ''}"
-        on:click={() => setSortMode('none')}
-    >
-        Standaard
-    </button>
-    <button
-        type="button"
-        class="sort-tab {sortMode === 'duration' ? 'active' : ''}"
-        on:click={() => setSortMode('duration')}
-    >
-        Duur (lang → kort)
-    </button>
-    <button
-        type="button"
-        class="sort-tab {sortMode === 'artistAmount' ? 'active' : ''}"
-        on:click={() => setSortMode('artistAmount')}
-    >
-        Artiest (meest → minst)
-    </button>
-    <button
-        type="button"
-        class="sort-tab {sortMode === 'genreAmount' ? 'active' : ''}"
-        on:click={() => setSortMode('genreAmount')}
-    >
-        Genre (meest → minst)
-    </button>
+	<button
+		type="button"
+		class="sort-tab {sortMode === 'none' ? 'active' : ''}"
+		on:click={() => setSortMode('none')}
+	>
+		Standaard
+	</button>
+	<button
+		type="button"
+		class="sort-tab {sortMode === 'duration' ? 'active' : ''}"
+		on:click={() => setSortMode('duration')}
+	>
+		Duur (lang → kort)
+	</button>
+	<button
+		type="button"
+		class="sort-tab {sortMode === 'artistAmount' ? 'active' : ''}"
+		on:click={() => setSortMode('artistAmount')}
+	>
+		Artiest (meest → minst)
+	</button>
+	<button
+		type="button"
+		class="sort-tab {sortMode === 'genreAmount' ? 'active' : ''}"
+		on:click={() => setSortMode('genreAmount')}
+	>
+		Genre (meest → minst)
+	</button>
 </div>
 
-<div bind:this={container} style="width: 100%; height: 100%;"></div>
+<div class="TREEMAP" bind:this={container} style="width: 100%; height: 100%;"></div>
 
 <div id="tooltip" bind:this={tooltip}>
 	{#if activeSlice}
@@ -378,116 +392,114 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 </p>
 
 <style>
-    /* Haal deze globale div-styling weg of maak 'm specifieker
-    div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    */
+	.TREEMAP {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 
-    .sort-tabs {
-        display: inline-flex;
-        gap: 0.5rem;
-        padding: 0.25rem;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.06);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        margin-bottom: 1rem;
-    }
+	.sort-tabs {
+		display: inline-flex;
+		gap: 0.5rem;
+		padding: 0.25rem;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.06);
+		backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		margin-bottom: 1rem;
+	}
 
-    .sort-tab {
-        border: none;
-        background: transparent;
-        color: #e5e5e5;
-        font-size: 0.85rem;
-        padding: 0.35rem 0.9rem;
-        border-radius: 999px;
-        cursor: pointer;
-        transition:
-            background-color 0.15s ease,
-            color 0.15s ease,
-            box-shadow 0.15s ease,
-            transform 0.05s ease;
-        white-space: nowrap;
-    }
+	.sort-tab {
+		border: none;
+		background: transparent;
+		color: #e5e5e5;
+		font-size: 0.85rem;
+		padding: 0.35rem 0.9rem;
+		border-radius: 999px;
+		cursor: pointer;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease,
+			box-shadow 0.15s ease,
+			transform 0.05s ease;
+		white-space: nowrap;
+	}
 
-    .sort-tab:hover {
-        background: rgba(255, 255, 255, 0.08);
-    }
+	.sort-tab:hover {
+		background: rgba(255, 255, 255, 0.08);
+	}
 
-    .sort-tab.active {
-        background: #1db954;
-        color: #000;
-        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
-        font-weight: 600;
-    }
+	.sort-tab.active {
+		background: #1db954;
+		color: #000;
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+		font-weight: 600;
+	}
 
-    .sort-tab:active {
-        transform: translateY(1px);
-    }
+	.sort-tab:active {
+		transform: translateY(1px);
+	}
 
-    .legend-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px 20px;
-        width: 100%;
-        max-width: 1154px;
-        padding: 10px 0;
-    }
-    .legend-item {
-        display: flex;
-        align-items: center;
-    }
-    .legend-color-box {
-        width: 14px;
-        height: 14px;
-        margin-right: 8px;
-        border: 1px solid #000000;
-        border-radius: 3px;
-    }
+	.legend-container {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 10px 20px;
+		width: 100%;
+		max-width: 1154px;
+		padding: 10px 0;
+	}
+	.legend-item {
+		display: flex;
+		align-items: center;
+	}
+	.legend-color-box {
+		width: 14px;
+		height: 14px;
+		margin-right: 8px;
+		border: 1px solid #000000;
+		border-radius: 3px;
+	}
 
-    .legend-label {
-        font-weight: 800;
-        color: white;
-        font-size: 12px;
-    }
+	.legend-label {
+		font-weight: 800;
+		color: white;
+		font-size: 12px;
+	}
 
-    #tooltip {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-        background: rgba(0, 0, 0, 0.9);
-        color: white;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        font-size: 0.8rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        z-index: 10;
-    }
+	#tooltip {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+		background: rgba(0, 0, 0, 0.9);
+		color: white;
+		padding: 0.5rem;
+		border-radius: 0.5rem;
+		font-size: 0.8rem;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+		z-index: 10;
+	}
 
-    .tooltip-content {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
+	.tooltip-content {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
 
-    .tooltip-image {
-        width: 48px;
-        height: 48px;
-        border-radius: 4px;
-        object-fit: cover;
-    }
+	.tooltip-image {
+		width: 48px;
+		height: 48px;
+		border-radius: 4px;
+		object-fit: cover;
+	}
 
-    .tooltip-text {
-        display: flex;
-        flex-direction: column;
-    }
+	.tooltip-text {
+		display: flex;
+		flex-direction: column;
+	}
 
-    .tooltip-sub {
-        font-size: 0.75em;
-        opacity: 0.8;
-    }
+	.tooltip-sub {
+		font-size: 0.75em;
+		opacity: 0.8;
+	}
 </style>
