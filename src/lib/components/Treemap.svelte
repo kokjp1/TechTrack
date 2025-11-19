@@ -71,13 +71,9 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
     let sortMode = 'none'; 
     // 'none' | 'duration' | 'artistAmount' | 'genreAmount'
 
-    function toggleSort() {
-        // voorbeeld: cyclen tussen verschillende sorteringen
-        if (sortMode === 'none') sortMode = 'duration';
-        else if (sortMode === 'duration') sortMode = 'artistAmount';
-        else if (sortMode === 'artistAmount') sortMode = 'genreAmount';
-        else sortMode = 'none';
-
+    function setSortMode(mode) {
+        if (sortMode === mode) return; // geen dubbele render
+        sortMode = mode;
         const data = buildTreemapData($sessionStore);
         renderTreemap(data);
     }
@@ -302,17 +298,36 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 <!-- + div gelijkstellen aan de container die met D3 gemaakt is via bind:this -->
 <!-- ------------------------------------->
 
-<button on:click={toggleSort}>
-    {#if sortMode === 'none'}
-        Sorteer: (geen)
-    {:else if sortMode === 'duration'}
-        Sorteer: duur (lang → kort)
-    {:else if sortMode === 'artistAmount'}
-        Sorteer: artiest (meest voorkomend → minst)
-    {:else if sortMode === 'genreAmount'}
-        Sorteer: genre (meest voorkomend → minst)
-    {/if}
-</button>
+<div class="sort-tabs">
+    <button
+        type="button"
+        class="sort-tab {sortMode === 'none' ? 'active' : ''}"
+        on:click={() => setSortMode('none')}
+    >
+        Standaard
+    </button>
+    <button
+        type="button"
+        class="sort-tab {sortMode === 'duration' ? 'active' : ''}"
+        on:click={() => setSortMode('duration')}
+    >
+        Duur (lang → kort)
+    </button>
+    <button
+        type="button"
+        class="sort-tab {sortMode === 'artistAmount' ? 'active' : ''}"
+        on:click={() => setSortMode('artistAmount')}
+    >
+        Artiest (meest → minst)
+    </button>
+    <button
+        type="button"
+        class="sort-tab {sortMode === 'genreAmount' ? 'active' : ''}"
+        on:click={() => setSortMode('genreAmount')}
+    >
+        Genre (meest → minst)
+    </button>
+</div>
 
 <div bind:this={container} style="width: 100%; height: 100%;"></div>
 
@@ -346,72 +361,116 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 </p>
 
 <style>
-	div {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
+    /* Haal deze globale div-styling weg of maak 'm specifieker
+    div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    */
 
-	.legend-container {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 10px 20px;
-		width: 100%;
-		max-width: 1154px;
-		padding: 10px 0;
-	}
-	.legend-item {
-		display: flex;
-		align-items: center;
-	}
-	.legend-color-box {
-		width: 14px;
-		height: 14px;
-		margin-right: 8px;
-		border: 1px solid #000000;
-		border-radius: 3px;
-	}
+    .sort-tabs {
+        display: inline-flex;
+        gap: 0.5rem;
+        padding: 0.25rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        margin-bottom: 1rem;
+    }
 
-	.legend-label {
-		font-weight: 800;
-		color: white;
-		font-size: 12px;
-	}
+    .sort-tab {
+        border: none;
+        background: transparent;
+        color: #e5e5e5;
+        font-size: 0.85rem;
+        padding: 0.35rem 0.9rem;
+        border-radius: 999px;
+        cursor: pointer;
+        transition:
+            background-color 0.15s ease,
+            color 0.15s ease,
+            box-shadow 0.15s ease,
+            transform 0.05s ease;
+        white-space: nowrap;
+    }
 
-	#tooltip {
-		position: absolute;
-		opacity: 0;
-		pointer-events: none;
-		background: rgba(0, 0, 0, 0.9);
-		color: white;
-		padding: 0.5rem;
-		border-radius: 0.5rem;
-		font-size: 0.8rem;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-		z-index: 10;
-	}
+    .sort-tab:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
 
-	.tooltip-content {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-	}
+    .sort-tab.active {
+        background: #1db954;
+        color: #000;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+        font-weight: 600;
+    }
 
-	.tooltip-image {
-		width: 48px;
-		height: 48px;
-		border-radius: 4px;
-		object-fit: cover;
-	}
+    .sort-tab:active {
+        transform: translateY(1px);
+    }
 
-	.tooltip-text {
-		display: flex;
-		flex-direction: column;
-	}
+    .legend-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 20px;
+        width: 100%;
+        max-width: 1154px;
+        padding: 10px 0;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+    }
+    .legend-color-box {
+        width: 14px;
+        height: 14px;
+        margin-right: 8px;
+        border: 1px solid #000000;
+        border-radius: 3px;
+    }
 
-	.tooltip-sub {
-		font-size: 0.75em;
-		opacity: 0.8;
-	}
+    .legend-label {
+        font-weight: 800;
+        color: white;
+        font-size: 12px;
+    }
+
+    #tooltip {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        z-index: 10;
+    }
+
+    .tooltip-content {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .tooltip-image {
+        width: 48px;
+        height: 48px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+    .tooltip-text {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tooltip-sub {
+        font-size: 0.75em;
+        opacity: 0.8;
+    }
 </style>

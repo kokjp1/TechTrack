@@ -23,3 +23,5 @@ dingen om te doen nog:
 * popularity tooltips netter maken (niet openen als je over de area hovert)
 * vinyl pauzeren als het liedje op pauze staat
 * pause play next contols
+* "legenda" voor de vinyl toevoegen (uitleg)
+* "onboarding" maken om uit te leggen wat het DOEL van de app is 

@@ -1,12 +1,12 @@
 <script>
-	import SongDurationPieChart from '$lib/components/SongDurationPieChart.svelte';
+	import Treemap from '$lib/components/Treemap.svelte';
 </script>
 
 <main>
     <h1>🧬 Het DNA van je sessie. 🧬</h1>
     <button class="back-button" on:click={() => history.back()} aria-label="Terug">← Terug</button>
 
-	<SongDurationPieChart />
+	<Treemap />
 
 </main>
 
