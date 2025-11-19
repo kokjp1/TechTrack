@@ -12,6 +12,20 @@
 	let tooltip;
 	let activeSlice = null;
 
+	const customPalette = [
+            '#1DB954', // Spotify Green
+			'#7C4DFF', // Deep Purple
+			'#E040FB', // Purple
+            '#FF4081', // Pink
+            '#00E5FF', // Cyan
+            '#FFD740', // Amber
+            '#69F0AE', // Green Accent
+            '#FF5252', // Red Accent
+            '#536DFE', // Indigo
+            '#FFAB40'  // Orange
+			
+        ];
+
 /* ------------------------------------------------
 DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 ------------------------------------------------- */
@@ -32,7 +46,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 						album: song.album,
 						genre: song.genre || 'Unknown',
 						durationMs: song.durationMs || song.duration || 0,
-						image: song.image // <--- Pass image through
+						image: song.image 
 					}))
 				}
 			]
@@ -96,7 +110,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		});
 
 		// kleur-schaal op basis van genres (blijft nodig voor de treemap zelf)
-		const color = d3.scaleOrdinal(allGenres, d3.schemeCategory10);
+        const color = d3.scaleOrdinal(allGenres, customPalette);
 		// https://d3js.org/d3-scale-chromatic/categorical
 
 		const songs = data.children[0]?.children ?? [];
@@ -112,7 +126,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 			.round(true)(
 				d3
 					.hierarchy(data)
-					.sum(d => 1)
+					.sum((d) => d.value) // Aangepast: gebruik d.value (duur) in plaats van 1
 					.sort((a, b) => {
 						// voor zover ik weet werkt de javascript/d3 sort functie zo dat je twee elementen tegen elkaar gaat afwegen, en om dat te doen moet je wel twee objecten hebben (a & b). vervolgens handelt d3/javascript het loopen door de hele lijst zelf af.
 						const aSong = a.data;
@@ -163,20 +177,21 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 					})
 			); // ChatGPT heeft me geholpen met de sorteerfunctie
 
-		const svg = d3
-			.create('svg')
-			.attr('viewBox', [0, 0, width, height])
-			.attr('width', width)
-			.attr('height', height)
-			.attr('style', 'max-width: 100%; height: auto;');
+        // Assign index for staggered animation
+        root.leaves().forEach((d, i) => (d.index = i));
+
+        const svg = d3
+            .create('svg')
+            .attr('viewBox', [0, 0, width, height])
+            .attr('width', width)
+            .attr('height', height)
+            .attr('style', 'max-width: 100%; height: auto;');
 
 		const leaf = svg
 			.selectAll('g')
 			.data(root.leaves())
 			.join('g')
 			.attr('transform', (d) => `translate(${d.x0},${d.y0})`);
-
-		// Default tooltip verwijderd (geen leaf.append('title'))
 
 		const rects = leaf
 			.selectAll('rect')
@@ -198,12 +213,14 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 					.attr('height', 0)
 					.call(enter =>
 						enter.transition().duration(500)
+							.delay((d) => d.index * 25)
 							.attr('width', (d) => d.x1 - d.x0)
 							.attr('height', (d) => d.y1 - d.y0)
 					),
 				update => update
 					.call(update =>
 						update.transition().duration(500)
+							.delay((d) => d.index * 25)
 							.attr('width', (d) => d.x1 - d.x0)
 							.attr('height', (d) => d.y1 - d.y0)
 					),
