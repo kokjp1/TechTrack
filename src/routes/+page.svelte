@@ -7,8 +7,9 @@ JAVASCRIPT IMPORTS
 	import { browser } from '$app/environment';
 	import { getStoredAccessToken } from '$lib/spotifyAuth';
 	import { currentSong } from '$lib/stores/currentSongDataStore.js';
+	import ConnectionStatus from '$lib/components/ConnectionStatus.svelte';
 
-	/* -------------------------
+/* -------------------------
 SVELTE COMPONENTS IMPORTS
 ------------------------- */
 
@@ -20,10 +21,16 @@ SVELTE COMPONENTS IMPORTS
 
 	let signedIn = false;
 
-	onMount(() => {
-		if (!browser) return;
+	function updateSignedIn() {
+		if (!browser) return; //SSR safeguard
 		signedIn = !!getStoredAccessToken();
-	});
+	}
+
+	onMount(() => {
+		updateSignedIn();
+		const interval = setInterval(updateSignedIn, 500);
+		return () => clearInterval(interval);
+	}); // check of de gebruiker uitgelogd heeft
 </script>
 
 <!------------------------------>
@@ -31,6 +38,7 @@ SVELTE COMPONENTS IMPORTS
 <!-- --------------------------->
 
 {#if signedIn}
+	<ConnectionStatus isConnected={signedIn} />
 	{#if $currentSong}
 		<main>
 			<TrackInfo />

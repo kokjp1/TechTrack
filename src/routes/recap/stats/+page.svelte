@@ -3,8 +3,12 @@
 </script>
 
 <main>
-	<h1>🧬 Het DNA van je sessie. 🧬</h1>
-	<button class="back-button" on:click={() => history.back()} aria-label="Terug">← Terug</button>
+	<div class="header-row">
+		<button class="back-button" on:click={() => history.back()} aria-label="Terug">
+			←
+		</button>
+		<h1>🧬 Het DNA van je sessie. 🧬</h1>
+	</div>
 
 	<Treemap />
 </main>
@@ -17,21 +21,47 @@
 		gap: 1rem;
 		padding: 2rem;
 	}
-	.back-button {
-		position: absolute;
-		top: 8px;
-		left: 8px;
-		z-index: 10;
-		background: rgba(0, 0, 0, 0.6);
-		color: #fff;
-		border: none;
-		padding: 6px 10px;
-		border-radius: 4px;
-		cursor: pointer;
-		font-size: 13px;
-		backdrop-filter: blur(4px);
+
+	.header-row {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 1rem;
 	}
+
+	h1 {
+		margin: 0;
+	}
+
+	.back-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+
+		background-color: #1db954;
+		color: #000;
+		border: none;
+		padding: 0.4rem 0.9rem;
+		border-radius: 999px;
+		cursor: pointer;
+		font-size: 0.85rem;
+		font-weight: 600;
+
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		transition:
+			background-color 0.15s ease,
+			transform 0.05s ease,
+			box-shadow 0.15s ease,
+			filter 0.15s ease;
+	}
+
 	.back-button:hover {
-		opacity: 0.9;
+		filter: brightness(0.9);
+		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+	}
+
+	.back-button:active {
+		transform: translateY(1px);
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 	}
 </style>

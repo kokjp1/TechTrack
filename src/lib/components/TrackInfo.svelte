@@ -70,7 +70,7 @@
 
 			<SessionControls />
 			<SessionList />
-		</section>
+			</section>
 	{/if}
 	<details>
 		<summary><span></span> Session System Tutorial</summary>
