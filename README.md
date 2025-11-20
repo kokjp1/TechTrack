@@ -89,3 +89,68 @@ D3 / SVG:
 - https://github.com/edeno/d3-save-svg/blob/gh-pages/README.md
 
 ---
+```
+TechTrack
+├─ .npmrc
+├─ .prettierignore
+├─ .prettierrc
+├─ eslint.config.js
+├─ jsconfig.json
+├─ LICENSE
+├─ package-lock.json
+├─ package.json
+├─ README.md
+├─ src
+│  ├─ app.html
+│  ├─ globals.css
+│  ├─ lib
+│  │  ├─ api
+│  │  │  └─ api.js
+│  │  ├─ assets
+│  │  │  ├─ favicon.svg
+│  │  │  ├─ fonts
+│  │  │  │  ├─ SF-Pro-Text-Bold.otf
+│  │  │  │  ├─ SF-Pro-Text-Heavy.otf
+│  │  │  │  ├─ SF-Pro-Text-Medium.otf
+│  │  │  │  ├─ SF-Pro-Text-Regular.otf
+│  │  │  │  └─ SF-Pro-Text-Semibold.otf
+│  │  │  ├─ qlementine-icons--sort-alpha-asc-16.svg
+│  │  │  ├─ qlementine-icons--sort-time-asc-16.svg
+│  │  │  └─ qlementine-icons--sort-user-asc-16.svg
+│  │  ├─ components
+│  │  │  ├─ AlbumCover.svelte
+│  │  │  ├─ ConnectionStatus.svelte
+│  │  │  ├─ EmptyState.svelte
+│  │  │  ├─ SessionControls.svelte
+│  │  │  ├─ SessionList.svelte
+│  │  │  ├─ TrackInfo.svelte
+│  │  │  ├─ Treemap.svelte
+│  │  │  ├─ visualization.svelte
+│  │  │  └─ ZeroState.svelte
+│  │  ├─ spotifyAuth.js
+│  │  ├─ stores
+│  │  │  ├─ currentSongDataStore.js
+│  │  │  └─ sessionStore.js
+│  │  └─ utils
+│  │     └─ formatDuration.js
+│  └─ routes
+│     ├─ +layout.svelte
+│     ├─ +page.svelte
+│     ├─ callback
+│     │  └─ +page.svelte
+│     └─ recap
+│        ├─ +page.svelte
+│        └─ stats
+│           └─ +page.svelte
+├─ static
+│  └─ robots.txt
+├─ svelte.config.js
+├─ vite.config.js
+└─ wiki
+   ├─ architecture.png
+   ├─ auth-code-flow.png
+   ├─ auth-implicit-grant.png
+   ├─ currently-playing.json
+   └─ sonoracover.jpg
+
+```
