@@ -7,6 +7,7 @@ import { onMount } from 'svelte';
 	import { getStoredAccessToken } from '$lib/spotifyAuth';
 	import { currentSong } from '$lib/stores/currentSongDataStore.js';
 	import ConnectionStatus from '$lib/components/connectionStatus.svelte';
+	// imports
 
 	/* -------------------------
     SVELTE COMPONENTS IMPORTS
