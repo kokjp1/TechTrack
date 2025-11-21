@@ -36,8 +36,7 @@ Sonora is een webapplicatie die je Spotify‑luistersessie visualiseert als een 
 - Onboarding en uitleg van het concept.
 - Connection status (Spotify sessie actief / verlopen).
 
-<img src="https://github.com/kokjp1/TechTrack/blob/main/wiki/session.png" width="55%">
-<img src="https://github.com/kokjp1/TechTrack/blob/main/wiki/recap.png" width="55%">
+<img src="https://github.com/kokjp1/TechTrack/blob/main/wiki/session.png" width="50%"><img src="https://github.com/kokjp1/TechTrack/blob/main/wiki/recap.png" width="50%">
 <img src="https://github.com/kokjp1/TechTrack/blob/main/wiki/treemap.png">
 
 ---
