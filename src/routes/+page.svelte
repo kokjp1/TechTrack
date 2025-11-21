@@ -6,7 +6,6 @@ import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { getStoredAccessToken } from '$lib/spotifyAuth';
 	import { currentSong } from '$lib/stores/currentSongDataStore.js';
-    // Verander ConnectionStatus.svelte naar connectionStatus.svelte
 	import ConnectionStatus from '$lib/components/connectionStatus.svelte';
 
 	/* -------------------------
@@ -16,7 +15,6 @@ import { onMount } from 'svelte';
 	import ZeroState from '$lib/components/ZeroState.svelte';
 	import EmptyState from '$lib/components/EmptyState.svelte';
 	import TrackInfo from '$lib/components/TrackInfo.svelte';
-    // Verander AlbumCover.svelte naar albumCover.svelte
 	import AlbumCover from '$lib/components/albumCover.svelte';
 	import Visualization from '$lib/components/visualization.svelte';
 
