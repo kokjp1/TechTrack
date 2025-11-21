@@ -2,21 +2,21 @@
 	/* -------------------------
 JAVASCRIPT IMPORTS
 ------------------------- */
-
-	import { onMount } from 'svelte';
+import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { getStoredAccessToken } from '$lib/spotifyAuth';
 	import { currentSong } from '$lib/stores/currentSongDataStore.js';
-	import ConnectionStatus from '$lib/components/ConnectionStatus.svelte';
+	import ConnectionStatus from '$lib/components/connectionStatus.svelte';
+	// imports
 
-/* -------------------------
-SVELTE COMPONENTS IMPORTS
-------------------------- */
+	/* -------------------------
+    SVELTE COMPONENTS IMPORTS
+    ------------------------- */
 
 	import ZeroState from '$lib/components/ZeroState.svelte';
 	import EmptyState from '$lib/components/EmptyState.svelte';
 	import TrackInfo from '$lib/components/TrackInfo.svelte';
-	import AlbumCover from '$lib/components/AlbumCover.svelte';
+	import AlbumCover from '$lib/components/albumCover.svelte';
 	import Visualization from '$lib/components/visualization.svelte';
 
 	let signedIn = false;
