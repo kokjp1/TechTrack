@@ -64,3 +64,75 @@ Sonora is een webapplicatie die je Spotify‑luistersessie visualiseert als een 
 - Nice‑to‑have: klikken op een genre in de visualisatie opent de Wikipedia‑pagina van dat genre.
 
 ---
+## Sonora lokaal draaien
+
+Wil je zelf met Sonora spelen of aan de code sleutelen? Zo start je het project lokaal op je eigen machine.
+
+### 1. Vereisten
+
+* **Node.js** (aanbevolen versie: Meest up-to-date)
+* **npm** (package manager)
+* Een **Spotify Developer account** + een aangemaakte **app** in het Spotify Dashboard:
+
+  * Client ID
+  * Redirect URL die wij in de app gebruiken (bijv. `http://127.0.0.1:5173/callback` of wat jij in je project hebt ingesteld)
+  > ivm opgeschroefte veiligheidsmaatregelen MOET je `http://127.0.0.1:5173/callback` gebruiken, en niet localhost.
+---
+
+### 2. Repo clonen en dependencies installeren
+
+```bash
+# Clone de repository
+git clone https://github.com/kokjp1/TechTrack.git
+cd TechTrack
+
+# Installeer dependencies
+npm install
+```
+
+---
+
+### 3. Environment variables instellen
+
+Maak een `.env` in de root van het project en vul daar de benodigde Spotify-variabelen in:
+
+```bash
+SPOTIFY_CLIENT_ID=je_client_id
+SPOTIFY_REDIRECT_URI=http://127.0.0.1:5173/callback
+SPOTIFY_SCOPES=user-read-currently-playing user-read-playback-state
+```
+> Uiteindelijk verander je de REDIRECT_URI naar" `www.domein.com/callback`
+
+Pas de namen/waarden aan op basis van hoe het in jouw project is opgezet.
+
+---
+### 4. Vite.config.js aanpassen
+
+Wegens eerder benoemde veiligheidsmaatregelen wilt spotify dat je development via `127.0.0.1:5173` verricht, en niet via localhost:5173. Om dit de Vite standard te maken voor dit project; moet `⚡ vite.config.js` er zo uit zien: 
+```js
+export default defineConfig({
+	plugins: [sveltekit()],
+	server: {
+    host: '127.0.0.1',   
+    port: 5173,          
+    strictPort: true     
+	// Wegens veiligheidsmaatregelen van de spotify API MOET de host (helaas handmatig) gezet worden op 127.0.0.1 ipv alleen localhost:5173
+  }
+});
+```
+---
+
+### 5. Development server starten
+
+```bash
+npm run dev
+```
+
+Open vervolgens de link die in de terminal verschijnt, meestal:
+
+```text
+http://127.0.0.1:5173
+```
+
+Log in met je Spotify-account via de knop in de app.
+Zodra de koppeling gelukt is en er een track speelt op je Spotify-account, begint de vinylvisualisatie live mee te bewegen met jouw sessie.
