@@ -22,7 +22,7 @@ SVELTE COMPONENTS IMPORTS
 	let signedIn = false;
 
 	function updateSignedIn() {
-		if (!browser) return; //SSR safeguard
+		if (!browser) return; //SSR safeguards
 		signedIn = !!getStoredAccessToken();
 	}
 
