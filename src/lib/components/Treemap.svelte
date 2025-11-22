@@ -327,7 +327,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
         }
     }
 
-    // optional: keep this or remove it if you only want resize/sort to re-render
+// optional: keep this or remove it if you only want resize/sort to re-render
     $: if (container && $sessionStore) {
         const data = buildTreemapData($sessionStore);
         renderTreemap(data);
@@ -394,12 +394,6 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		</div>
 	{/each}
 </div>
-
-<p>
-	Wow! Je hebt in totaal "aantal liedjes" geluisterd sinds "tijdstip". Je sessie bestond
-	voornamelijk uit: "genre". Maarliefst "deel/geheel" liedjes waren "genre". Je tweede populairste
-	genre was "genre" met "deel/geheel"
-</p>
 
 <style>
 	.TREEMAP {

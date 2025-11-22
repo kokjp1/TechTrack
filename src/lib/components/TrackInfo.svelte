@@ -87,9 +87,6 @@
 <!-- --------------------------->
 
 <style>
-	:root {
-		interpolate-size: allow-keywords;
-	}
 	details {
 		overflow: hidden;
 		background-color: rgba(42, 42, 42, 0.5);

@@ -45,8 +45,8 @@ Sonora is een webapplicatie die je Spotify‑luistersessie visualiseert als een 
 
 ### UI / UX
 
-- [ ] Vinyl pauzeren als het liedje op pauze staat.
-- [ ] “Legenda” voor de vinyl toevoegen (uitleg).
+- [x] Vinyl pauzeren als het liedje op pauze staat.
+- [x] “Legenda” voor de vinyl toevoegen (uitleg).
 
 ### Visualisatie / data‑weergave
 
@@ -55,7 +55,6 @@ Sonora is een webapplicatie die je Spotify‑luistersessie visualiseert als een 
 ### Techniek / kwaliteit
 
 - [ ] Console‑error fixen voor als er geen song speelt.
-- [ ] Code opschonen 🔁
 
 ### Als ik meer tijd gehad zou hebben;
 

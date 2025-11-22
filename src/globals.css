@@ -50,6 +50,10 @@ html {
     font-style: normal;
 }
 
+:root {
+    interpolate-size: allow-keywords;
+}
+
 :root,
 html,
 body {

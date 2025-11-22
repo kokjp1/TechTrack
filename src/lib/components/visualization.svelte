@@ -48,9 +48,12 @@
 	<clipPath id="coverClip">
 		<circle cx="250" cy="250" r={vinylImageSize} />
 	</clipPath>
-
+	
 	<!-- Vinyl + cover in één draaiende groep -->
-	<g class="spin" style={`--spin-duration: ${spinDurationSec}s`}>
+	<g
+        class="spin { $currentSong.status === false ? 'paused' : '' }"
+        style={`--spin-duration: ${spinDurationSec}s`}
+    >
 		<circle
 			cx="250"
 			cy="250"
@@ -92,6 +95,10 @@
 		transform-box: fill-box;
 		transform-origin: center;
 	}
+
+	.spin.paused {
+        animation-play-state: paused;
+    }
 
 	@keyframes spin {
 		from {
