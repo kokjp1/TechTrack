@@ -16,6 +16,8 @@
 
 	let isMobile = false;
 
+	let hideUnknownGenres = false;
+
 	const customPalette = [
 		'#1DB954',
 		'#7C4DFF',
@@ -53,21 +55,28 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 	function buildTreemapData(session) {
 		const songs = session?.sessionPlayedSongs ?? [];
 
+		let children = songs.map((song) => ({
+			name: song.title || 'Unknown',
+			value: song.durationMs || song.duration || 0,
+			id: song.id,
+			artists: song.artists,
+			album: song.album,
+			genre: song.genre || 'Unknown',
+			durationMs: song.durationMs || song.duration || 0,
+			image: song.image
+		}));
+
+		// Filter Unknown genres als checkbox aan staat
+		if (hideUnknownGenres) {
+			children = children.filter((song) => (song.genre || 'Unknown') !== 'Unknown');
+		}
+
 		return {
 			name: 'root',
 			children: [
 				{
 					name: 'Session',
-					children: songs.map((song) => ({
-						name: song.title || 'Unknown',
-						value: song.durationMs || song.duration || 0,
-						id: song.id,
-						artists: song.artists,
-						album: song.album,
-						genre: song.genre || 'Unknown',
-						durationMs: song.durationMs || song.duration || 0,
-						image: song.image
-					}))
+					children
 				}
 			]
 		};
@@ -125,6 +134,9 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 			const genre = song.genre || 'Unknown';
 			if (!allGenres.includes(genre)) allGenres.push(genre);
 		});
+
+		// Als alles Unknown is en hideUnknownGenres true is, dan is data leeg;
+		// daar hoeven we verder niets speciaals voor te doen: treemap wordt dan gewoon leeg gerenderd.
 
 		// kleur-schaal op basis van genres (blijft nodig voor de treemap zelf)
 		const color = d3.scaleOrdinal(allGenres, customPalette);
@@ -385,7 +397,23 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		</div>
 	{/if}
 </div>
-
+<div class="treemap-header">
+    <label class="unknown-filter">
+        <input
+            type="checkbox"
+            bind:checked={hideUnknownGenres}
+            on:change={() => {
+                const data = buildTreemapData($sessionStore);
+                renderTreemap(data);
+            }}
+        />
+        <span>Verberg nummers zonder genre (“Unknown”)</span>
+    </label>
+    <p class="unknown-disclaimer">
+        Spotify levert helaas niet voor elk liedje een genre. Daarom kun je er hier voor kiezen om
+        alle <strong>Unknown</strong>-liedjes uit de visualisatie te filteren.
+    </p>
+</div>
 <div class="legend-container">
 	{#each legendData as item}
 		<div class="legend-item">
@@ -512,5 +540,36 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 	.tooltip-sub {
 		font-size: 0.75em;
 		opacity: 0.8;
+	}
+
+	.treemap-header {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		margin-bottom: 0.75rem;
+		max-width: 1154px;
+	}
+
+	.unknown-filter {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		color: #e5e5e5;
+		font-size: 0.85rem;
+		cursor: pointer;
+		user-select: none;
+	}
+
+	.unknown-filter input {
+		accent-color: #1db954;
+		cursor: pointer;
+	}
+
+	.unknown-disclaimer {
+		margin: 0;
+		font-size: 0.75rem;
+		color: #b3b3b3;
+		max-width: 40rem;
+		line-height: 1.3;
 	}
 </style>

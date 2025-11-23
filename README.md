@@ -41,26 +41,12 @@ Sonora is een webapplicatie die je Spotify‑luistersessie visualiseert als een 
 
 ---
 
-## To‑do
-
-### UI / UX
-
-- [x] Vinyl pauzeren als het liedje op pauze staat.
-- [x] “Legenda” voor de vinyl toevoegen (uitleg).
-
-### Visualisatie / data‑weergave
-
-- [ ] Textueel verhaaltje (templating) fixen onder de treemap.
-
-### Techniek / kwaliteit
-
-- [ ] Console‑error fixen voor als er geen song speelt.
-
 ### Als ik meer tijd gehad zou hebben;
 
 - Pause / play / next controls integreren
 - Nice‑to‑have: klikken op een legenda‑genre om te filteren op dat genre.
 - Nice‑to‑have: klikken op een genre in de visualisatie opent de Wikipedia‑pagina van dat genre.
+- Textueel verhaaltje onder de grafiek die het textueel ook uitlegt
 
 ---
 
