@@ -1,4 +1,4 @@
-import { writable, get } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { goto } from '$app/navigation';
 
 export const sessionStore = writable({

@@ -4,9 +4,9 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
-    host: '127.0.0.1',   
-    port: 5173,          
-    strictPort: true     
-	// Wegens veiligheidsmaatregelen van de spotify API MOET de host (helaas handmatig) gezet worden op 127.0.0.1 ipv alleen localhost:5173
-  }
+		host: '127.0.0.1',
+		port: 5173,
+		strictPort: true
+		// Wegens veiligheidsmaatregelen van de spotify API MOET de host (helaas handmatig) gezet worden op 127.0.0.1 ipv alleen localhost:5173
+	}
 });

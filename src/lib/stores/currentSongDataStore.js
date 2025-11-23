@@ -22,7 +22,7 @@ export const currentSong = readable(null, (set) => {
 			const data = storableSongData;
 			const track = data.data.item;
 
-			/* -------------------------
+	/* -------------------------
       SESSION LOGICA 
       + nodig omdat de het currentSong Object hier gemaakt/opgeslagen word, sessionStore dient puur om de "recording" state bij te houden en bij te houden WELKE liedjes er in de sessie zijn, niet OM de liedjes zelf op te slaan
       ------------------------- */
@@ -54,7 +54,7 @@ export const currentSong = readable(null, (set) => {
 						durationMs: track.duration_ms,
 						image: track.album.images[0].url,
 						capturedAt: Date.now(),
-						genre: trackGenre 
+						genre: trackGenre
 					};
 
 					let updatedSongs = session.sessionPlayedSongs.slice();

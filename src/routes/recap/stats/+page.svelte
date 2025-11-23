@@ -4,9 +4,7 @@
 
 <main>
 	<div class="header-row">
-		<button class="back-button" on:click={() => history.back()} aria-label="Terug">
-			←
-		</button>
+		<button class="back-button" on:click={() => history.back()} aria-label="Terug"> ← </button>
 		<h1>🧬 Het DNA van je sessie. 🧬</h1>
 	</div>
 
