@@ -73,6 +73,10 @@ JAVASCRIPT IMPORTS
 			flex-direction: column-reverse;
 			gap: 3em;
 			margin: 0;
+
+			height: auto;
+			min-height: 100vh; 
+			padding: 2rem 0;
 		}
 	}
 
