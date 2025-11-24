@@ -7,13 +7,12 @@ const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
-const SCOPES =
-	import.meta.env.VITE_SPOTIFY_SCOPES || 'user-read-currently-playing user-read-playback-state';
+const SCOPES = import.meta.env.VITE_SPOTIFY_SCOPES;
 
 const CODE_VERIFIER_KEY = 'spotify_pkce_code_verifier';
 const ACCESS_TOKEN_KEY = 'spotify_access_token';
 const REFRESH_TOKEN_KEY = 'spotify_refresh_token';
-const TOKEN_EXP_KEY = 'spotify_token_exp'; // epoch seconds
+const TOKEN_EXP_KEY = 'spotify_token_exp';
 
 function toBase64Url(buffer) {
 	const bytes = new Uint8Array(buffer);

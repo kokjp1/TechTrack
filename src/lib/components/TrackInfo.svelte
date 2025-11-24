@@ -7,6 +7,7 @@
 	import SessionControls from '$lib/components/SessionControls.svelte';
 	import SessionList from '$lib/components/SessionList.svelte';
 	import { formatDuration } from '$lib/utils/formatDuration.js';
+	import Playback from '$lib/components/Playback.svelte';
 </script>
 
 <!----------------------------->
@@ -30,9 +31,7 @@
 			</div>
 		{/if}
 		<section class="player-controls">
-			<button>previous</button>
-			<button>play/pause</button>
-			<button>next</button>
+			<Playback />
 		</section>
 		<section class="info-section">
 			<p class="info-heading">GENERAL TRACK INFORMATION</p>
@@ -87,6 +86,9 @@
 <!-- --------------------------->
 
 <style>
+	.player-controls {
+		margin-top: 1em;
+	}
 	details {
 		overflow: hidden;
 		background-color: rgba(42, 42, 42, 0.5);
@@ -155,10 +157,6 @@
 
 	details[open]::details-content {
 		block-size: auto;
-	}
-
-	.player-controls {
-		display: none;
 	}
 
 	div {

@@ -398,21 +398,22 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 	{/if}
 </div>
 <div class="treemap-header">
-    <label class="unknown-filter">
-        <input
-            type="checkbox"
-            bind:checked={hideUnknownGenres}
-            on:change={() => {
-                const data = buildTreemapData($sessionStore);
-                renderTreemap(data);
-            }}
-        />
-        <span>Verberg nummers zonder genre (“Unknown”)</span>
-    </label>
-    <p class="unknown-disclaimer">
-        Spotify levert helaas niet voor elk liedje een genre. Daarom kun je er hier voor kiezen om
-        alle <strong>Unknown</strong>-liedjes uit de visualisatie te filteren.
-    </p>
+	<label class="unknown-filter">
+		<input
+			type="checkbox"
+			bind:checked={hideUnknownGenres}
+			on:change={() => {
+				const data = buildTreemapData($sessionStore);
+				renderTreemap(data);
+			}}
+		/>
+		<span>Verberg nummers zonder genre (“Unknown”)</span>
+	</label>
+	<p class="unknown-disclaimer">
+		Spotify levert helaas niet voor elk liedje een genre. Daarom kun je er hier voor kiezen om alle <strong
+			>Unknown</strong
+		>-liedjes uit de visualisatie te filteren.
+	</p>
 </div>
 <div class="legend-container">
 	{#each legendData as item}

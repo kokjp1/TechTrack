@@ -86,6 +86,7 @@
 		width: 500px;
 		height: auto;
 		transform: translateX(50%);
+		margin-top: 3em;
 		z-index: -1;
 		overflow: visible;
 	}
