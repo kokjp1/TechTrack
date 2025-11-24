@@ -85,7 +85,7 @@ Maak een `.env` in de root van het project en vul daar de benodigde Spotify-vari
 ```bash
 SPOTIFY_CLIENT_ID=je_client_id
 SPOTIFY_REDIRECT_URI=http://127.0.0.1:5173/callback
-SPOTIFY_SCOPES=user-read-currently-playing user-read-playback-state
+SPOTIFY_SCOPES=user-read-currently-playing user-read-playback-state user-modify-playback-state
 ```
 
 > Uiteindelijk verander je de REDIRECT_URI naar" `www.domein.com/callback`
