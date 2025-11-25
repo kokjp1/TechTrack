@@ -17,15 +17,15 @@
 	// if currentsong exists AND has a duration -> calculation -> else 0
 </script>
 
+<!------------------------------>
+<!-- PLAYERCONTROLS SECTION -->
+<!-- --------------------------->
+
 {#if $currentSong}
+
+	<!-- seekbar -->
 	<div class="playback-container">
-		<input
-			type="range"
-			class="progress-slider"
-			min="0"
-			max={$currentSong.duration}
-			value={$currentSong.progress || 0}
-			on:change={handleSeek}
+		<input type="range" class="progress-slider" min="0" max={$currentSong.duration} value={$currentSong.progress || 0} on:change={handleSeek}
 			style="
                 --progress-color: {$currentSong.vibrantAlbumColor || '#1db954'};
                 
@@ -38,8 +38,8 @@
 			<span>{formatDuration($currentSong.progress || 0)}</span>
 			<span>{formatDuration($currentSong.duration || 0)}</span>
 		</div>
-
-		<!-- Controls -->
+		
+		<!-- controls -->
 		<div class="controls">
 			<button class="controlbutton" on:click={previous} aria-label="Previous">⏮</button>
 

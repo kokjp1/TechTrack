@@ -7,6 +7,10 @@
 	import sortByArtistIcon from '$lib/assets/qlementine-icons--sort-user-asc-16.svg';
 	import sortByGenreIcon from '$lib/assets/qlementine-icons--sort-alpha-asc-16.svg';
 
+	/* ----------------------------------
+    VARIABLE DECLARATIONS & FLAGS ZETTEN
+    ----------------------------------- */
+
 	let container;
 	let sessionChart;
 	let legendData = [];
@@ -31,13 +35,16 @@
 		'#FFAB40'
 	];
 
+	/* -------------------------
+    MOBILE DICE -> SLICE 
+    ------------------------- */
+
 	function updateLayout() {
 		isMobile = window.innerWidth < 768;
 		const data = buildTreemapData($sessionStore);
 		renderTreemap(data);
 	}
 
-	// run once on mount + watch resize
 	import { onMount, onDestroy } from 'svelte';
 
 	onMount(() => {
@@ -48,14 +55,15 @@
 	onDestroy(() => {
 		window.removeEventListener('resize', updateLayout);
 	});
+
 	/* ------------------------------------------------
-DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
-------------------------------------------------- */
+	DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
+	------------------------------------------------- */
 
 	function buildTreemapData(session) {
 		const songs = session?.sessionPlayedSongs ?? [];
 
-		let children = songs.map((song) => ({
+		let songDataEntries = songs.map((song) => ({
 			name: song.title || 'Unknown',
 			value: song.durationMs || song.duration || 0,
 			id: song.id,
@@ -67,8 +75,8 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		}));
 
 		// Filter Unknown genres als checkbox aan staat
-		if (hideUnknownGenres) {
-			children = children.filter((song) => (song.genre || 'Unknown') !== 'Unknown');
+		if (hideUnknownGenres === true) {
+			songDataEntries = songDataEntries.filter((song) => (song.genre || 'Unknown') !== 'Unknown');
 		}
 
 		return {
@@ -76,7 +84,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 			children: [
 				{
 					name: 'Session',
-					children
+					children: songDataEntries
 				}
 			]
 		};
@@ -93,7 +101,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 				artistAmount.set(key, (artistAmount.get(key) || 0) + 1);
 			}
 		}
-		return artistAmount; // Map(artistName -> count)
+		return artistAmount; 
 	}
 
 	// telt hoe vaak elk genre voorkomt
@@ -103,7 +111,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 			const genre = song.genre || 'Unknown';
 			genreAmount.set(genre, (genreAmount.get(genre) || 0) + 1);
 		}
-		return genreAmount; // Map(genre -> count)
+		return genreAmount; 
 	}
 
 	/* -----------------------------------------------------
@@ -113,11 +121,12 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 	let sortMode = 'none';
 
 	function setSortMode(mode) {
-		if (sortMode === mode) return; // geen dubbele render
+		if (sortMode === mode) return; 
 		sortMode = mode;
 		const data = buildTreemapData($sessionStore);
 		renderTreemap(data);
 	}
+	// later als je de functie called de sort keuze meegeven
 
 	function renderTreemap(data) {
 		if (sessionChart && sessionChart.parentNode) {
@@ -135,34 +144,34 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 			if (!allGenres.includes(genre)) allGenres.push(genre);
 		});
 
-		// Als alles Unknown is en hideUnknownGenres true is, dan is data leeg;
-		// daar hoeven we verder niets speciaals voor te doen: treemap wordt dan gewoon leeg gerenderd.
-
-		// kleur-schaal op basis van genres (blijft nodig voor de treemap zelf)
 		const color = d3.scaleOrdinal(allGenres, customPalette);
 		// https://d3js.org/d3-scale-chromatic/categorical
 
 		const songs = data.children[0]?.children ?? [];
-		// telling functie aanroepen en maken van artiest voorkomendheid en genre voorkomendheid
+		// telling functie aanroepen en telling maken van artiest voorkomendheid en genre voorkomendheid
 		const artistAmount = buildArtistFrequency(songs);
 		const genreAmount = buildGenreFrequency(songs);
+
+		/* -------------------------
+		TREEMAP "CONFIG/SETTINGS" CODE
+		------------------------- */
 
 		const root = d3.treemap().tile(tile).size([width, height]).padding(1).round(true)(
 			d3
 				.hierarchy(data)
-				.sum((d) => d.value) // Aangepast: gebruik d.value (duur) in plaats van 1
+				.sum((d) => d.value) 
 				.sort((a, b) => {
 					const aSong = a.data;
 					const bSong = b.data;
 
 					if (sortMode === 'none') {
-						return 0; // originele volgorde
+						return 0; 
 					}
 
 					if (sortMode === 'duration') {
 						const aDur = aSong?.durationMs ?? 0;
 						const bDur = bSong?.durationMs ?? 0;
-						return bDur - aDur; // lang -> kort
+						return bDur - aDur; 
 					}
 
 					if (sortMode === 'artistAmount') {
@@ -198,7 +207,10 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 				})
 		);
 
-		// Assign index for staggered animation
+		/* -------------------------
+		LEAFS (ELEMENTS) VAN DE TREE MAKEN
+		------------------------- */
+
 		root.leaves().forEach((d, i) => (d.index = i));
 
 		const svg = d3
@@ -255,6 +267,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 						exit.transition().duration(300).attr('width', 0).attr('height', 0).remove()
 					)
 			);
+			// https://github.com/cmda-tt/course-25-26/blob/main/week-3/slides/tt_wk3_d3-joins_les-10_do.pdf
 
 		leaf
 			.append('clipPath')
@@ -291,7 +304,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
             `
 			);
 
-		/* -----------------------------------------------------------------
+	/* -----------------------------------------------------------------
     TOOLTIP CODE | https://codepen.io/dandevri/pen/azdrEQb?editors=1010
     ----------------------------------------------------------------- */
 		rects
@@ -320,7 +333,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 			d3.select(tooltip).style('opacity', 0);
 		});
 
-		/* ---------------------------------
+	/* ---------------------------------
     LEGENDA CODE 
     --------------------------------- */
 		legendData = allGenres.map((genre) => {
@@ -330,7 +343,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 			};
 		});
 
-		/* ---------------------------------
+	/* ---------------------------------
     SVG FINALISEREN EN AAN DOM TOEVOEGEN
     --------------------------------- */
 		sessionChart = svg.node();
@@ -339,7 +352,6 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		}
 	}
 
-	// optional: keep this or remove it if you only want resize/sort to re-render
 	$: if (container && $sessionStore) {
 		const data = buildTreemapData($sessionStore);
 		renderTreemap(data);
@@ -410,9 +422,7 @@ DATA / SESSION SONGS IMPORTEREN EN BRUIKBAAR MAKEN
 		<span>Verberg nummers zonder genre (“Unknown”)</span>
 	</label>
 	<p class="unknown-disclaimer">
-		Spotify levert helaas niet voor elk liedje een genre. Daarom kun je er hier voor kiezen om alle <strong
-			>Unknown</strong
-		>-liedjes uit de visualisatie te filteren.
+		Spotify levert helaas niet voor elk liedje een genre. Daarom kun je er hier voor kiezen om alle <strong>Unknown</strong>-liedjes uit de visualisatie te filteren.
 	</p>
 </div>
 <div class="legend-container">

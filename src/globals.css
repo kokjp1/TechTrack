@@ -1,4 +1,3 @@
-/* Ensure SF Pro is used everywhere by default */
 *,
 *::before,
 *::after {
@@ -11,7 +10,6 @@
 		sans-serif !important;
 }
 
-/* Existing rules */
 html {
 	background-color: #121212;
 	font-family:

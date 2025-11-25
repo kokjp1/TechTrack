@@ -16,13 +16,12 @@
 
 <div>
 	{#if $currentSong}
-		<!-- title -->
 		{#if $currentSong.title}
 			<h1 class="now-playing">{$currentSong.title}</h1>
 		{/if}
 
 		{#if $currentSong.artists || $currentSong.album}
-			<div class="sub">
+			<div class="subtekst">
 				{#if $currentSong.artists}{$currentSong.artists}{/if}
 				{#if $currentSong.artists && $currentSong.album}
 					•
@@ -171,7 +170,7 @@
 		margin: 0;
 	}
 
-	.sub {
+	.subtekst {
 		color: #9aa5b1;
 		margin-top: 16px;
 		margin-bottom: 16px;
@@ -249,7 +248,7 @@
 			font-size: 3em;
 			text-align: center;
 		}
-		.sub {
+		.subtekst {
 			text-align: center;
 		}
 
@@ -286,7 +285,7 @@
 			font-size: 2em;
 			text-align: center;
 		}
-		.sub {
+		.subtekst {
 			font-size: 1em;
 			text-align: center;
 		}

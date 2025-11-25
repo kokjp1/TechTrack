@@ -1,16 +1,10 @@
 <script>
+	// connectionstatus exporteren om de homepage te laten weten of de spotify verbinding actief is
 	export let isConnected = false;
 
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { clearAuth, startLogin } from '$lib/spotifyAuth';
-
-	function handleStatusClick() {
-		if (isConnected === false) {
-			clearAuth();
-			startLogin();
-		}
-	}
 
 	function handleLogoutClick() {
 		clearAuth();
@@ -18,7 +12,7 @@
 </script>
 
 <div class="connection-container">
-	<button class="connection-status" on:click={handleStatusClick}>
+	<button class="connection-status">
 		<span class:connected={isConnected} class:notconnected={!isConnected}></span>
 		{#if isConnected}
 			Spotify is connected

@@ -35,8 +35,6 @@
 
 	$: spinDurationSec = durationToSpinSec($currentSong.duration / 1000);
 
-	// DEBUG LOGGING
-	// $: console.log('[Visualization] artistPopularity:', $currentSong.artistPopularity, '-> glowBlurSize(px):', glowBlurSize);
 </script>
 
 <!----------------------------->

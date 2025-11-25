@@ -4,9 +4,9 @@
 
 import { getStoredAccessToken } from '$lib/spotifyAuth';
 
-/* -------------------------
-      API Query 
-  ------------------------- */
+/* -----------------------------------
+      Current Track Object API Query
+  ---------------------------------- */
 
 export async function getCurrentSongData() {
 	const token = getStoredAccessToken();
@@ -17,8 +17,10 @@ export async function getCurrentSongData() {
 		{ headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' }
 	);
 
+	if (res.status === 204 || res.status > 400) return null;
+
 	/* -------------------------
-      Opgevraagde data
+      artiesten API query
   ------------------------- */
 
 	const data = await res.json();
@@ -42,6 +44,10 @@ export async function getCurrentSongData() {
 	}
 
 	const artistPopularity = artistsDetails[0].popularity;
+  
+/* -------------------------
+	Opgevraagde data opslaan
+  ------------------------- */
 
 	return {
 		title: data.item.name,

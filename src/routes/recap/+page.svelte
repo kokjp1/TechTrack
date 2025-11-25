@@ -1,22 +1,17 @@
 <script>
 	import { sessionStore } from '$lib/stores/sessionStore.js';
 	import { goto } from '$app/navigation';
+	import { formatDuration } from '$lib/utils/formatDuration.js';
 
 	/* -------------------------
     TIJD/DATUM FORMATTEREN
     ------------------------- */
-	function formatDuration(duration) {
-		const totalSeconds = Math.floor(duration / 1000);
-		const minutes = Math.floor(totalSeconds / 60);
-		const seconds = totalSeconds % 60;
-		return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-	}
-	// formateer functie via ChatGPT //hergebruikt uit trackinfo.svelte
 	function formatCaptureTime(dateParameter) {
 		const date = new Date(dateParameter);
 		return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 	}
 	// formateer functie via ChatGPT
+	
 </script>
 
 <div class="container">

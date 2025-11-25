@@ -13,6 +13,7 @@
 			loading = false;
 		});
 	}
+	// meteen loading state koppelen als je inlogt ongeacht of er echt loading is of niet (puur esthetisch)
 </script>
 
 <div class="zero-state">

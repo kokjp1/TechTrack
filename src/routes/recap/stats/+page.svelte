@@ -7,7 +7,6 @@
 		<button class="back-button" on:click={() => history.back()} aria-label="Terug"> ← </button>
 		<h1>🧬 Het DNA van je sessie. 🧬</h1>
 	</div>
-
 	<Treemap />
 </main>
 

@@ -23,11 +23,7 @@ export function stopSession() {
 		return Object.assign({}, currentSessionState, { recording: false });
 	});
 	goto('/recap');
-	//   console.log('recorded session songs:', currentSession.sessionPlayedSongs);
 }
-
-// slice zonder getal maakt gwn een hele array aan
-// maak een kopie van de session songs played array en voeg daaraan een nieuw liedje toe en return vervolgens de updated songs als sessionplayedSongs
 
 export function updateSessionSongs(sessionSong) {
 	sessionStore.update(function (currentSession) {
@@ -37,3 +33,6 @@ export function updateSessionSongs(sessionSong) {
 		return Object.assign({}, currentSession, { sessionPlayedSongs: updatedSongs });
 	});
 }
+
+// slice zonder getal maakt een hele array aan
+// maak een kopie van de session songs played array en voeg daaraan een nieuw liedje toe en return vervolgens de updated songs als sessionplayedSongs
