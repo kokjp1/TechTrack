@@ -2,7 +2,7 @@
 
 Sonora is een webapplicatie die je Spotify‑luistersessie visualiseert als een draaiende vinylplaat in het midden van het scherm, aangevuld met extra datavisualisaties. Elke track krijgt zo zijn eigen “custom vinyl”, gebaseerd op eigenschappen van het nummer, de artiest en het album.
 
-![Sonora Cover](https://github.com/kokjp1/TechTrack/blob/main/wiki/homepage.png)
+![Sonora Cover](https://github.com/kokjp1/TechTrack/blob/1e1f2faab8dd30cc3fb7b804b9ba4dc676961ef0/wiki/homepage.png)
 
 ## Concept in het kort
 
