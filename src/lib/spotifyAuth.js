@@ -104,11 +104,7 @@ export async function exchangeCodeForToken(code) {
         code_verifier: verifier
     });
 
-    const res = await fetch(SPOTIFY_TOKEN_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body
-    });
+    const res = await fetch(SPOTIFY_TOKEN_URL, {method: 'POST',headers: { 'Content-Type': 'application/x-www-form-urlencoded' },body});
 
     if (!res.ok) throw new Error('Token exchange failed');
     const data = await res.json();
